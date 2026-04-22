@@ -1,0 +1,9 @@
+node_modules/
+.env
+.env.*
+!.env.example
+Demo/
+MDM_Pbl/
+RescueLink/
+digisaathi.zip
+.DS_Store

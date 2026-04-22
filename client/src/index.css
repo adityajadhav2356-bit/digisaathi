@@ -1,0 +1,341 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap');
+@import "tailwindcss";
+@config "../tailwind.config.js";
+
+@layer base {
+  :root {
+    --wa-green:      #25D366;
+    --wa-teal:       #128C7E;
+    --wa-dark:       #075E54;
+    --wa-light:      #DCF8C6;
+    --wa-bg:         #ECE5DD;
+    --wa-chat-bg:    #F0F2F5;
+    --wa-panel:      #FFFFFF;
+    --wa-header:     #128C7E;
+    --wa-text:       #111B21;
+    --wa-subtext:    #667781;
+    --wa-border:     #E9EDEF;
+    --wa-shadow:     0 1px 3px rgba(0,0,0,0.12);
+    --wa-shadow-md:  0 2px 8px rgba(0,0,0,0.10);
+    --wa-shadow-lg:  0 4px 20px rgba(18,140,126,0.18);
+    --radius-lg:     16px;
+    --radius-xl:     24px;
+    --radius-2xl:    32px;
+  }
+
+  * {
+    box-sizing: border-box;
+    -webkit-tap-highlight-color: transparent;
+  }
+
+  html {
+    scroll-behavior: smooth;
+  }
+
+  body {
+    font-family: 'Inter', sans-serif;
+    font-size: 16px;
+    color: var(--wa-text);
+    background-color: #F8FAFC; /* slate-50 base */
+    background-image: 
+      radial-gradient(at 0% 0%, rgba(18,140,126,0.12) 0px, transparent 50%), 
+      radial-gradient(at 100% 0%, rgba(37,211,102,0.12) 0px, transparent 50%), 
+      radial-gradient(at 100% 100%, rgba(14,165,233,0.1) 0px, transparent 50%), 
+      radial-gradient(at 0% 100%, rgba(139,92,246,0.08) 0px, transparent 50%);
+    background-attachment: fixed;
+    min-height: 100vh;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    overflow-x: hidden;
+  }
+}
+
+@layer components {
+
+  /* ── Main App Shell ── */
+  .app-shell {
+    @apply min-h-screen text-wa-text;
+  }
+
+  /* ── WhatsApp-style Header ── */
+  .wa-header {
+    background: rgba(18, 140, 126, 0.7);
+    @apply sticky top-0 z-40 w-full px-4 py-3 flex items-center justify-between shadow-wa-md backdrop-blur-xl border-b border-wa-teal/30;
+  }
+
+  .wa-header-title {
+    @apply text-white font-black text-xl tracking-tight drop-shadow-md;
+  }
+
+  /* ── Panel / White Card (Glass) ── */
+  .wa-panel {
+    @apply bg-glass-panel backdrop-blur-2xl rounded-2xl shadow-[0_8px_32px_0_rgba(31,38,135,0.07)] border border-white/50 relative overflow-hidden transition-all duration-500;
+  }
+  
+  .wa-panel:hover {
+    @apply shadow-[0_16px_40px_rgba(0,0,0,0.1)] -translate-y-1 scale-[1.005];
+  }
+  
+  /* Add subtle shine effect to glass panels */
+  .wa-panel::before {
+    content: '';
+    @apply absolute inset-0 bg-gradient-to-br from-white/40 to-transparent opacity-50 pointer-events-none;
+  }
+
+  .wa-panel-lg {
+    @apply bg-glass-panel backdrop-blur-3xl rounded-3xl shadow-[0_12px_40px_rgba(0,0,0,0.1)] border border-white/60 relative overflow-hidden transition-all duration-500;
+  }
+
+  .wa-panel-lg:hover {
+    @apply shadow-[0_20px_50px_rgba(0,0,0,0.15)] -translate-y-1 scale-[1.002];
+  }
+
+  /* ── Chat Bubble Style ── */
+  .wa-bubble {
+    @apply bg-wa-bubble rounded-2xl rounded-tl-sm px-4 py-3 shadow-wa max-w-xs text-wa-text;
+  }
+
+  .wa-bubble-sent {
+    @apply bg-wa-bubbleSent rounded-2xl rounded-tr-sm px-4 py-3 shadow-wa max-w-xs text-wa-text;
+  }
+
+  /* ── Buttons ── */
+  .btn-wa-primary {
+    @apply flex items-center justify-center gap-3 px-6 py-4 rounded-2xl font-bold text-white
+           transition-all duration-300 active:scale-95 shadow-wa-lg outline-none select-none relative overflow-hidden;
+    background: linear-gradient(135deg, rgba(37,211,102,0.9) 0%, rgba(18,140,126,0.9) 100%);
+    backdrop-filter: blur(10px);
+    border: 1px solid rgba(255,255,255,0.3);
+  }
+
+  .btn-wa-primary:hover {
+    background: linear-gradient(135deg, rgba(37,211,102,1) 0%, rgba(18,140,126,1) 100%);
+    box-shadow: 0 8px 30px rgba(37,211,102,0.4);
+    transform: translateY(-2px);
+  }
+
+  .btn-wa-secondary {
+    @apply flex items-center justify-center gap-3 px-6 py-4 rounded-2xl font-bold
+           bg-white/70 backdrop-blur-md text-wa-teal border-[1.5px] border-wa-green transition-all duration-300 
+           active:scale-95 outline-none select-none shadow-sm;
+  }
+
+  .btn-wa-secondary:hover {
+    @apply bg-white border-wa-teal shadow-md;
+    transform: translateY(-2px);
+  }
+
+  .btn-wa-ghost {
+    @apply flex items-center justify-center gap-2 px-4 py-2.5 rounded-xl font-semibold
+           text-wa-subtext hover:bg-wa-border transition-all duration-150 active:scale-95;
+  }
+
+  .btn-wa-danger {
+    @apply flex items-center justify-center gap-3 px-6 py-4 rounded-2xl font-bold text-white
+           bg-red-500 hover:bg-red-600 transition-all duration-200 active:scale-95 shadow-wa;
+  }
+
+  /* ── Input ── */
+  .wa-input {
+    @apply w-full px-4 py-3.5 rounded-xl border border-white/50 bg-white/40 backdrop-blur-md 
+           focus:bg-white/80 focus:border-wa-teal focus:ring-4 focus:ring-wa-teal/20 
+           outline-none text-wa-text placeholder-wa-subtext/80 transition-all text-base font-medium shadow-inner;
+  }
+
+  /* ── Tag / Badge ── */
+  .wa-badge {
+    @apply inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-xs font-bold;
+  }
+
+  .wa-badge-green {
+    @apply inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-xs font-bold bg-wa-light text-wa-dark;
+  }
+
+  .wa-badge-red {
+    @apply inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-xs font-bold bg-red-100 text-red-700;
+  }
+
+  .wa-badge-orange {
+    @apply inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-xs font-bold bg-orange-100 text-orange-700;
+  }
+
+  /* ── List Row (like WhatsApp chat list) ── */
+  .wa-list-row {
+    @apply flex items-center gap-4 px-4 py-3.5 bg-white/40 hover:bg-white/60 backdrop-blur-sm 
+           transition-colors duration-150 cursor-pointer border-b border-wa-border/50 last:border-0;
+  }
+
+  /* ── Avatar ── */
+  .wa-avatar {
+    @apply w-12 h-12 rounded-full shrink-0 object-cover;
+  }
+
+  .wa-avatar-lg {
+    @apply w-16 h-16 rounded-full shrink-0 object-cover ring-4 ring-wa-green/30;
+  }
+
+  /* ── Progress Bar ── */
+  .wa-progress-track {
+    @apply h-2 w-full bg-wa-border rounded-full overflow-hidden;
+  }
+
+  .wa-progress-fill {
+    @apply h-full rounded-full transition-all duration-700;
+    background: linear-gradient(90deg, #25D366 0%, #128C7E 100%);
+  }
+
+  /* ── Section Header ── */
+  .wa-section-title {
+    @apply text-wa-subtext text-xs font-bold uppercase tracking-widest px-4 py-2 bg-wa-chatBg;
+  }
+
+  /* ── Floating Action Button ── */
+  .wa-fab {
+    @apply fixed bottom-28 right-5 w-14 h-14 rounded-full flex items-center justify-center 
+           text-white shadow-wa-lg z-40 transition-all duration-200 active:scale-90;
+    background: linear-gradient(135deg, #25D366 0%, #128C7E 100%);
+  }
+
+  .wa-fab:hover {
+    box-shadow: 0 8px 28px rgba(37,211,102,0.4);
+    transform: scale(1.08);
+  }
+
+  /* ── Module Card ── */
+  .module-card {
+    @apply bg-glass-panel backdrop-blur-xl rounded-2xl shadow-[0_4px_16px_rgba(0,0,0,0.04)] border border-white/60 overflow-hidden
+           hover:shadow-[0_12px_28px_rgba(0,0,0,0.1)] transition-all duration-300 cursor-pointer relative;
+  }
+  
+  .module-card::after {
+    content: '';
+    @apply absolute inset-0 bg-gradient-to-b from-white/30 to-transparent pointer-events-none opacity-50;
+  }
+
+  .module-card:hover {
+    transform: translateY(-3px) scale(1.005);
+  }
+
+  .module-card:active {
+    transform: scale(0.98);
+  }
+
+  /* ── Stat Card ── */
+  .stat-card {
+    @apply flex flex-col items-center justify-center p-4 bg-white/60 backdrop-blur-lg rounded-2xl 
+           shadow-sm border border-white/80 text-center gap-1 hover:bg-white/80 transition-colors;
+  }
+
+  /* ── Alert Card ── */
+  .alert-card-high {
+    @apply bg-white rounded-2xl shadow-wa border-l-4 border-l-red-500 border border-wa-border p-4;
+  }
+
+  .alert-card-medium {
+    @apply bg-white rounded-2xl shadow-wa border-l-4 border-l-orange-400 border border-wa-border p-4;
+  }
+
+  /* ── Bottom Nav ── */
+  .wa-bottom-nav {
+    @apply fixed bottom-0 left-0 w-full z-50 bg-white/80 backdrop-blur-xl border-t border-white/40 flex justify-around items-center px-2;
+    padding-bottom: max(16px, env(safe-area-inset-bottom));
+    box-shadow: 0 -4px 30px rgba(0,0,0,0.06);
+  }
+
+  /* ── Separator ── */
+  .wa-divider {
+    @apply h-px w-full bg-wa-border my-2;
+  }
+
+  /* ── Notification dot ── */
+  .wa-dot {
+    @apply w-5 h-5 rounded-full bg-wa-green text-white text-[10px] font-black 
+           flex items-center justify-center;
+  }
+
+  /* ── Chip ── */
+  .wa-chip {
+    @apply inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full border text-sm font-semibold transition-all;
+  }
+
+  .wa-chip-active {
+    @apply inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full border text-sm font-semibold transition-all bg-wa-teal text-white border-wa-teal;
+  }
+
+  .wa-chip-inactive {
+    @apply inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full border text-sm font-semibold transition-all bg-white text-wa-subtext border-wa-border hover:border-wa-teal hover:text-wa-teal;
+  }
+
+  /* ── Glassmorphism for splash/overlays ── */
+  .glass-card {
+    @apply backdrop-blur-md bg-white/10 border border-white/20 rounded-2xl p-6 shadow-lg text-white;
+  }
+
+  .glass-input {
+    @apply w-full px-5 py-4 rounded-xl border border-white/30 bg-white/5 focus:bg-white/20 
+           focus:border-white focus:ring-2 focus:ring-white/50 outline-none text-white 
+           placeholder-slate-400 backdrop-blur-sm transition-all text-lg font-medium;
+  }
+
+  .btn-base {
+    @apply rounded-[2rem] font-bold flex items-center justify-center gap-3 px-6 py-4 
+           shadow-lg active:scale-95 outline-none transition-all duration-300 text-white border border-white/10;
+  }
+}
+
+/* ── Scrollbar ── */
+::-webkit-scrollbar { width: 4px; height: 4px; }
+::-webkit-scrollbar-track { background: var(--wa-chat-bg); }
+::-webkit-scrollbar-thumb { background: var(--wa-border); border-radius: 99px; }
+::-webkit-scrollbar-thumb:hover { background: var(--wa-subtext); }
+
+/* ── Smooth page transitions ── */
+.page-enter { opacity: 0; transform: translateX(20px); }
+.page-enter-active { opacity: 1; transform: translateX(0); transition: all 260ms ease; }
+.page-exit { opacity: 1; transform: translateX(0); }
+.page-exit-active { opacity: 0; transform: translateX(-20px); transition: all 200ms ease; }
+
+/* ── Ripple effect ── */
+.ripple {
+  position: relative;
+  overflow: hidden;
+}
+
+.ripple::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(circle, rgba(37,211,102,0.15) 10%, transparent 70%);
+  opacity: 0;
+  transition: opacity 400ms;
+}
+
+.ripple:active::after {
+  opacity: 1;
+}
+
+/* ── Micro-animations ── */
+@keyframes slideUp {
+  from { opacity: 0; transform: translateY(16px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to   { opacity: 1; }
+}
+
+@keyframes pulse-green {
+  0%, 100% { box-shadow: 0 0 0 0 rgba(37,211,102,0.4); }
+  50%       { box-shadow: 0 0 0 10px rgba(37,211,102,0); }
+}
+
+.animate-slide-up  { animation: slideUp 300ms ease forwards; }
+.animate-fade-in   { animation: fadeIn 250ms ease forwards; }
+.animate-pulse-green { animation: pulse-green 2s infinite; }
+
+.animation-delay-2000 { animation-delay: 2s; }
+.animation-delay-4000 { animation-delay: 4s; }
+
+/* ── Safe area padding for bottom nav ── */
+.pb-safe { padding-bottom: max(16px, env(safe-area-inset-bottom)); }
