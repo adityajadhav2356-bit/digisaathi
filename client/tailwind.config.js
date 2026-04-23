@@ -7,40 +7,40 @@ export default {
   theme: {
     extend: {
       colors: {
-        // WhatsApp/Green palette upgraded for premium look
+        // SimpleSphere Modern UI Palette
         wa: {
-          green:     '#25D366',
-          teal:      '#128C7E',
-          dark:      '#075E54',
-          light:     '#DCF8C6',
+          green:     '#3b82f6', // blue-500
+          teal:      '#2563eb', // blue-600
+          dark:      '#1e3a8a', // blue-900
+          light:     '#eff6ff', // blue-50
           bg:        'transparent',
           chatBg:    'transparent',
-          panel:     'rgba(255, 255, 255, 0.65)', // Glass fallback
-          header:    'rgba(18, 140, 126, 0.85)',
-          bubble:    '#DCF8C6',
-          bubbleSent:'#E7FFDB',
-          text:      '#111B21',
-          subtext:   '#4B5563',
-          border:    'rgba(255, 255, 255, 0.3)',
-          unread:    '#25D366',
-          icon:      '#54656F',
+          panel:     'rgba(255, 255, 255, 0.8)', // Modern Glass
+          header:    'rgba(255, 255, 255, 0.9)', // Clean Header
+          bubble:    '#dbeafe', // blue-100
+          bubbleSent:'#bfdbfe', // blue-200
+          text:      '#0f172a', // slate-900
+          subtext:   '#475569', // slate-600
+          border:    'rgba(37, 99, 235, 0.15)',
+          unread:    '#3b82f6',
+          icon:      '#64748b',
         },
-        brandBgDark: '#0f0c29',
-        textPrimary:   '#111B21',
-        textSecondary: '#667781',
+        brandBgDark: '#020617', // slate-950
+        textPrimary:   '#0f172a',
+        textSecondary: '#64748b',
       },
       backgroundImage: {
-        'mesh-premium': "radial-gradient(at 0% 0%, rgba(18,140,126,0.15) 0px, transparent 50%), radial-gradient(at 100% 0%, rgba(37,211,102,0.1) 0px, transparent 50%), radial-gradient(at 100% 100%, rgba(14,165,233,0.1) 0px, transparent 50%), radial-gradient(at 0% 100%, rgba(139,92,246,0.1) 0px, transparent 50%)",
-        'glass-panel': "linear-gradient(135deg, rgba(255,255,255,0.8) 0%, rgba(255,255,255,0.4) 100%)",
+        'mesh-premium': "radial-gradient(at 0% 0%, rgba(37,99,235,0.15) 0px, transparent 50%), radial-gradient(at 100% 0%, rgba(59,130,246,0.1) 0px, transparent 50%), radial-gradient(at 100% 100%, rgba(99,102,241,0.1) 0px, transparent 50%), radial-gradient(at 0% 100%, rgba(139,92,246,0.1) 0px, transparent 50%)",
+        'glass-panel': "linear-gradient(135deg, rgba(255,255,255,0.9) 0%, rgba(255,255,255,0.5) 100%)",
         'glass-dark': "linear-gradient(135deg, rgba(15,23,42,0.8) 0%, rgba(15,23,42,0.6) 100%)",
       },
       fontFamily: {
         sans: ['Inter', 'sans-serif'],
       },
       boxShadow: {
-        wa: '0 1px 3px rgba(0,0,0,0.12)',
-        'wa-md': '0 2px 8px rgba(0,0,0,0.10)',
-        'wa-lg': '0 4px 20px rgba(18,140,126,0.18)',
+        wa: '0 1px 3px rgba(0,0,0,0.08)',
+        'wa-md': '0 4px 12px rgba(0,0,0,0.06)',
+        'wa-lg': '0 8px 30px rgba(37,99,235,0.12)',
       },
       animation: {
         blob: 'blob 8s infinite',

@@ -4,6 +4,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { useNavigate } from 'react-router-dom';
 import PageTransition from '../components/PageTransition';
 import { useLanguage, LANGUAGES } from '../context/LanguageContext';
+import { GoogleGenerativeAI } from '@google/generative-ai';
 
 const VoiceAssistantPage = () => {
   const navigate = useNavigate();
@@ -111,66 +112,28 @@ const VoiceAssistantPage = () => {
   };
 
   const processQuery = async (query, currentLang) => {
-    const responses = {
-      en: {
-        whatsapp: "To use WhatsApp, first open the app. Then tap the chat icon to start a new message. You can send text, voice messages, or make video calls.",
-        upi: "UPI payments are safe and easy. Open your payment app like PhonePe or Google Pay. Tap on Send Money, enter the amount, and confirm with your PIN.",
-        help: "I'm here to help you with WhatsApp, UPI payments, online shopping, and government services. What would you like to learn about?",
-        default: "I'm your digital assistant. I can help you with mobile apps, payments, and government services. Please ask me anything!"
-      },
-      hi: {
-        whatsapp: "व्हाट्सएप का उपयोग करने के लिए, पहले ऐप खोलें। फिर नया संदेश शुरू करने के लिए चैट आइकन पर टैप करें। आप टेक्स्ट, वॉयस संदेश भेज सकते हैं या वीडियो कॉल कर सकते हैं।",
-        upi: "UPI भुगतान सुरक्षित और आसान है। PhonePe या Google Pay जैसे अपने पेमेंट ऐप को खोलें। Send Money पर टैप करें, राशि दर्ज करें, और अपने PIN से पुष्टि करें।",
-        help: "मैं व्हाट्सएप, UPI भुगतान, ऑनलाइन शॉपिंग और सरकारी सेवाओं में आपकी मदद के लिए यहां हूं। आप क्या सीखना चाहेंगे?",
-        default: "मैं आपका डिजिटल सहायक हूं। मैं मोबाइल ऐप्स, भुगतान और सरकारी सेवाओं में आपकी मदद कर सकता हूं। कृपया मुझसे कुछ भी पूछें!"
-      },
-      mr: {
-        whatsapp: "व्हाट्सअॅप वापरण्यासाठी, प्रथम अॅप उघडा. नंतर नवीन संदेश सुरू करण्यासाठी चॅट आयकॉनवर टॅप करा. तुम्ही मजकूर, व्हॉइस संदेश पाठवू शकता किंवा व्हिडिओ कॉल करू शकता.",
-        upi: "UPI पेमेंट सुरक्षित आणि सोपे आहे. PhonePe किंवा Google Pay सारखे तुमचे पेमेंट अॅप उघडा. Send Money वर टॅप करा, रक्कम टाका आणि तुमच्या PIN ने पुष्टी करा.",
-        help: "मी व्हाट्सअॅप, UPI पेमेंट, ऑनलाइन खरेदी आणि सरकारी सेवांमध्ये तुम्हाला मदत करण्यासाठी येथे आहे. तुम्हाला काय शिकायचे आहे?",
-        default: "मी तुमचा डिजिटल सहाय्यक आहे. मी मोबाइल अॅप्स, पेमेंट आणि सरकारी सेवांमध्ये तुम्हाला मदत करू शकतो. कृपया मला काहीही विचारा!"
-      },
-      gu: {
-        whatsapp: "WhatsApp વાપરવા માટે, પહેલા એપ્લિકેશન ખોલો. પછી નવો સંદેશ શરૂ કરવા ચેટ આયકોન પર ટેપ કરો. તમે ટેક્સ્ટ, વૉઇસ સંદેશા મોકલી શકો છો અથવા વિડિઓ કૉલ કરી શકો છો.",
-        upi: "UPI પેમેન્ટ સુરક્ષિત અને સરળ છે. PhonePe અથવા Google Pay જેવી તમારી પેમેન્ટ એપ ખોલો. Send Money પર ટેપ કરો, રકમ દાખલ કરો અને તમારા PIN થી પુષ્ટિ કરો.",
-        help: "હું WhatsApp, UPI પેમેન્ટ, ઑનલાઇન શોપિંગ અને સરકારી સેવાઓમાં તમારી મદદ કરવા માટે અહીં છું. તમે શું શીખવા માંગો છો?",
-        default: "હું તમારો ડિજિટલ સહાયક છું. હું મોબાઇલ એપ્સ, પેમેન્ટ્સ અને સરકારી સેવાઓમાં તમને મદદ કરી શકું છું. કૃપા કરીને મને કંઈપણ પૂછો!"
-      },
-      bn: {
-        whatsapp: "হোয়াটসঅ্যাপ ব্যবহার করতে, প্রথমে অ্যাপটি খুলুন। তারপর নতুন বার্তা শুরু করতে চ্যাট আইকনে ট্যাপ করুন। আপনি টেক্সট, ভয়েস বার্তা পাঠাতে পারেন বা ভিডিও কল করতে পারেন।",
-        upi: "UPI পেমেন্ট নিরাপদ এবং সহজ। আপনার পেমেন্ট অ্যাপ যেমন PhonePe বা Google Pay খুলুন। Send Money-তে ট্যাপ করুন, পরিমাণ লিখুন এবং আপনার PIN দিয়ে নিশ্চিত করুন।",
-        help: "আমি হোয়াটসঅ্যাপ, UPI পেমেন্ট, অনলাইন শপিং এবং সরকারি সেবায় আপনাকে সাহায্য করতে এখানে আছি। আপনি কী শিখতে চান?",
-        default: "আমি আপনার ডিজিটাল সহায়ক। আমি মোবাইল অ্যাপ, পেমেন্ট এবং সরকারি সেবায় আপনাকে সাহায্য করতে পারি। দয়া করে আমাকে যেকোনো কিছু জিজ্ঞাসা করুন!"
-      },
-      ta: {
-        whatsapp: "WhatsApp பயன்படுத்த, முதலில் ஆப்ஸை திறக்கவும். பின்னர் புதிய செய்தியைத் தொடங்க அரட்டை ஐகானைத் தட்டவும். நீங்கள் உரை, குரல் செய்திகளை அனுப்பலாம் அல்லது வீடியோ அழைப்புகளை செய்யலாம்.",
-        upi: "UPI கட்டணங்கள் பாதுகாப்பானது மற்றும் எளிதானது. PhonePe அல்லது Google Pay போன்ற உங்கள் கட்டண ஆப்ஸைத் திறக்கவும். Send Money என்பதைத் தட்டவும், தொகையை உள்ளிடவும் மற்றும் உங்கள் PIN மூலம் உறுதிப்படுத்தவும்.",
-        help: "நான் WhatsApp, UPI கட்டணங்கள், ஆன்லைன் ஷாப்பிங் மற்றும் அரசு சேவைகளில் உங்களுக்கு உதவ இங்கே இருக்கிறேன். நீங்கள் என்ன கற்றுக்கொள்ள விரும்புகிறீர்கள்?",
-        default: "நான் உங்கள் டிஜிட்டல் உதவியாளர். மொபைல் ஆப்ஸ், கட்டணங்கள் மற்றும் அரசு சேவைகளில் நான் உங்களுக்கு உதவ முடியும். தயவுசெய்து என்னிடம் எதையும் கேளுங்கள்!"
-      },
-      te: {
-        whatsapp: "WhatsApp ఉపయోగించడానికి, మొదట యాప్ తెరవండి. తర్వాత కొత్త సందేశాన్ని ప్రారంభించడానికి చాట్ చిహ్నాన్ని నొక్కండి. మీరు టెక్స్ట్, వాయిస్ సందేశాలను పంపవచ్చు లేదా వీడియో కాల్స్ చేయవచ్చు.",
-        upi: "UPI చెల్లింపులు సురక్షితం మరియు సులభం. PhonePe లేదా Google Pay వంటి మీ చెల్లింపు యాప్ తెరవండి. Send Money నొక్కండి, మొత్తాన్ని నమోదు చేయండి మరియు మీ PIN తో నిర్ధారించండి.",
-        help: "నేను WhatsApp, UPI చెల్లింపులు, ఆన్‌లైన్ షాపింగ్ మరియు ప్రభుత్వ సేవలలో మీకు సహాయం చేయడానికి ఇక్కడ ఉన్నాను. మీరు ఏమి నేర్చుకోవాలనుకుంటున్నారు?",
-        default: "నేను మీ డిజిటల్ సహాయకుడిని. మొబైల్ యాప్‌లు, చెల్లింపులు మరియు ప్రభుత్వ సేవలలో నేను మీకు సహాయం చేయగలను. దయచేసి నన్ను ఏదైనా అడగండి!"
+    try {
+      const apiKey = import.meta.env.VITE_GEMINI_API_KEY;
+      if (!apiKey || apiKey === 'your_gemini_api_key_here') {
+        throw new Error('Missing API Key');
       }
-    };
 
-    const langResponses = responses[currentLang] || responses.en;
-    const lowerQuery = query.toLowerCase();
-    
-    // Simulate slight network delay
-    await new Promise(resolve => setTimeout(resolve, 600));
+      const genAI = new GoogleGenerativeAI(apiKey);
+      const model = genAI.getGenerativeModel({ model: "gemini-2.5-flash" });
 
-    if (lowerQuery.includes('whatsapp') || lowerQuery.includes('व्हाट्स')) {
-      return langResponses.whatsapp;
-    } else if (lowerQuery.includes('upi') || lowerQuery.includes('payment') || lowerQuery.includes('भुगतान') || lowerQuery.includes('पेमेंट')) {
-      return langResponses.upi;
-    } else if (lowerQuery.includes('help') || lowerQuery.includes('मदद') || lowerQuery.includes('सहायता')) {
-      return langResponses.help;
+      const prompt = `You are a helpful digital literacy assistant named DigiSaathi AI based in India. 
+      Help the user with their question about apps, smartphones, payments, Aadhaar, or online safety.
+      Keep your answer very short, friendly, and directly helpful (1 to 3 sentences maximum). Make it conversational for voice output.
+      You MUST reply in the language specified by this ISO code: ${currentLang}.
+      
+      User query: ${query}`;
+
+      const result = await model.generateContent(prompt);
+      return result.response.text();
+    } catch (error) {
+      console.warn("Gemini API Error:", error);
+      return `Detailed Error: ${error.message}.`;
     }
-    
-    return langResponses.default;
   };
 
   const getErrorMessage = (currentLang) => {

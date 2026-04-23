@@ -234,6 +234,7 @@ const ModulePage = () => {
               content={currentStep.content} 
               moduleIcon={data.icon} 
               defaultColor={data.color} 
+              imageUrl={currentStep.image}
             />
 
             {/* Content card */}

@@ -2,7 +2,27 @@ import React from 'react';
 import { motion } from 'framer-motion';
 import { MessageCircle, Phone, Video, CreditCard, ShieldAlert, FileText, Settings, User } from 'lucide-react';
 
-const ContextualGraphic = ({ title, content, moduleIcon, defaultColor }) => {
+const ContextualGraphic = ({ title, content, moduleIcon, defaultColor, imageUrl }) => {
+  if (imageUrl) {
+    return (
+      <div className="w-full h-52 rounded-3xl overflow-hidden shadow-wa-md relative group">
+        <img 
+          src={imageUrl} 
+          alt={title} 
+          className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110"
+        />
+        <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent"></div>
+        <div className="absolute bottom-4 left-4 right-4">
+          <div className="flex items-center gap-2">
+            <span className="text-2xl">{moduleIcon}</span>
+            <div className="w-1.5 h-1.5 rounded-full bg-wa-teal animate-pulse"></div>
+            <span className="text-white/80 text-xs font-bold uppercase tracking-widest">Real Demo</span>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
   const combinedText = `${title} ${content}`.toLowerCase();
 
   // Keyword extraction for contextual logic

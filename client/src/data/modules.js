@@ -8,12 +8,41 @@ const enModules = [
     totalSteps: 6,
     completed: true,
     steps: [
-      { id: 1, title: "What is UPI?", content: "UPI stands for Unified Payments Interface. It lets you send money to anyone using just your phone number or UPI ID — instantly and for free!", tip: "UPI is safe and used by over 30 crore Indians daily." },
-      { id: 2, title: "Which apps use UPI?", content: "Popular UPI apps include Google Pay (GPay), PhonePe, Paytm, and BHIM. All are free to download from the Play Store.", tip: "BHIM is made by the Government of India — very trustworthy!" },
-      { id: 3, title: "Setting up your UPI ID", content: "Your UPI ID looks like: yourname@okaxis or phone@ybl. You create it once inside your UPI app by linking your bank account.", tip: "Your UPI ID is safe to share — it cannot be used to steal money." },
-      { id: 4, title: "Sending money", content: "Tap 'Send Money', enter the receiver's UPI ID or phone number, type the amount, and enter your 4 or 6 digit UPI PIN to confirm.", tip: "Always double-check the name shown before entering your PIN!", image: "https://images.unsplash.com/photo-1556742502-ec7c0e9f34b1?q=80&w=800&auto=format&fit=crop" },
-      { id: 5, title: "Receiving money", content: "To receive money, just share your UPI ID or phone number. You do NOT need to enter any PIN to receive money.", tip: "If someone asks for your PIN to send you money — it is a SCAM!" },
-      { id: 6, title: "Checking your balance", content: "Open your UPI app, go to 'Bank Balance' or 'Check Balance', enter your UPI PIN. Your current balance will be shown.", tip: "Check your balance after every transaction to stay safe." }
+      { 
+        id: 1, 
+        title: "Scanning a QR Code", 
+        content: "To pay at a shop, look for the QR code (the square black & white patterns). Open your UPI app and tap the 'Scan' button. Point your camera at the pattern.", 
+        tip: "Keep your phone steady for a second while it scans.",
+        image: "https://images.unsplash.com/photo-1595079676339-1534801ad6cf?q=80&w=800&auto=format&fit=crop"
+      },
+      { 
+        id: 2, 
+        title: "Entering the Amount", 
+        content: "Once scanned, you will see the shopkeeper's name. Enter the total amount you need to pay and tap 'Pay'.", 
+        tip: "Always check the shop name on your screen before paying.",
+        image: "https://images.unsplash.com/photo-1556742502-ec7c0e9f34b1?q=80&w=800&auto=format&fit=crop"
+      },
+      { 
+        id: 3, 
+        title: "The Secure PIN Screen", 
+        content: "You will now see a black or blue screen asking for your UPI PIN. Enter your 4 or 6 digit secret number.", 
+        tip: "Never tell your PIN to anyone, even if they claim to be from the bank.",
+        image: "https://images.unsplash.com/photo-1621416848440-236911cfa0f7?q=80&w=800&auto=format&fit=crop"
+      },
+      { 
+        id: 4, 
+        title: "Payment Successful", 
+        content: "If everything goes right, you'll see a big green checkmark! This means the money has been sent securely.", 
+        tip: "You will also get an SMS from your bank confirming the payment.",
+        image: "https://images.unsplash.com/photo-1518458028785-8fbcd101ebb9?q=80&w=800&auto=format&fit=crop"
+      },
+      { 
+        id: 5, 
+        title: "Receiving Money Safely", 
+        content: "To receive money, you just need to show your QR or share your number. You NEVER need to enter a PIN to receive money.", 
+        tip: "If someone asks for your PIN to 'GIVE' you a prize — it is a SCAM!",
+        image: "https://images.unsplash.com/photo-1563013544-824ae1b704d3?q=80&w=800&auto=format&fit=crop"
+      }
     ],
     quiz: [
       { q: "What do you need to RECEIVE money on UPI?", options: ["Your UPI PIN", "Your UPI ID or phone number", "Your bank password", "Your Aadhaar number"], correct: 1 },
@@ -30,8 +59,34 @@ const enModules = [
     totalSteps: 5,
     completed: false,
     steps: [
-      { id: 1, title: "What is WhatsApp?", content: "WhatsApp is a free app to send messages, photos, voice notes, and make video calls to family and friends anywhere in the world.", tip: "WhatsApp calls use the internet — no call charges apply!" },
-      { id: 2, title: "Sending a message", content: "Open WhatsApp, tap on a contact's name, type your message in the box at the bottom, and tap the green send button.", tip: "Two blue ticks means your message was read by the other person.", image: "https://images.unsplash.com/photo-1611162617474-5b21e879e113?q=80&w=800&auto=format&fit=crop" }
+      { 
+        id: 1, 
+        title: "Starting a Conversation", 
+        content: "Open WhatsApp and tap the small 'Message' bubble icon at the bottom. Select the name of the person you want to talk to.", 
+        tip: "You can find your family members by scrolling through the list of Alphabetical names.",
+        image: "https://images.unsplash.com/photo-1614680376593-902f74cf0d41?q=80&w=800&auto=format&fit=crop"
+      },
+      { 
+        id: 2, 
+        title: "Typing and Sending", 
+        content: "Tap where it says 'Type a message'. A keyboard will pop up. Type your message and tap the green circle button with the white arrow to send.", 
+        tip: "If you make a mistake, you can use the backspace key to delete letters.",
+        image: "https://images.unsplash.com/photo-1512428559083-a40193214878?q=80&w=800&auto=format&fit=crop"
+      },
+      { 
+        id: 3, 
+        title: "Sending a Voice Note", 
+        content: "If typing is hard, just hold down the green 'Microphone' icon and speak. Release it when you are done to send your voice.", 
+        tip: "Voice notes are great for wishing someone 'Happy Birthday' or sending long updates!",
+        image: "https://images.unsplash.com/photo-1521931961826-fe48add07948?q=80&w=800&auto=format&fit=crop"
+      },
+      { 
+        id: 4, 
+        title: "The Magic of Video Calls", 
+        content: "Tap the 'Camera' icon at the top right of a chat to see your loved ones face-to-face while you talk!", 
+        tip: "Make sure you are in a brightly lit room so they can see your smile clearly.",
+        image: "https://images.unsplash.com/photo-1588196749597-9ff075ee6b5b?q=80&w=800&auto=format&fit=crop"
+      }
     ],
     quiz: [
       { q: "What do two blue ticks mean on WhatsApp?", options: ["Message was sent", "Message was delivered", "Message was read", "Message was deleted"], correct: 2 }
