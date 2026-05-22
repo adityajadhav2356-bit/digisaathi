@@ -13,6 +13,7 @@ DigiSaathi is a full-stack web application designed specifically for senior citi
 
 ## 🛠️ Tech Stack
 - **Frontend**: React 18, React Router v6, Tailwind CSS, Framer Motion, Axios, Context API, Lucide-React.
+- **AI**: Google Gemini API (gemini-1.5-flash) for multilingual digital literacy assistance.
 - **Backend**: Node.js, Express, Firebase Admin SDK.
 - **Database/Auth**: Firebase Firestore & Firebase Auth (OTP).
 

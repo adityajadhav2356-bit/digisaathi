@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { Mic, MicOff, Volume2, Loader, ChevronLeft } from 'lucide-react';
+import { Mic, MicOff, Volume2, Loader, ChevronLeft, Send } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useNavigate } from 'react-router-dom';
 import PageTransition from '../components/PageTransition';
@@ -11,6 +11,7 @@ const VoiceAssistantPage = () => {
   const { lang, t } = useLanguage();
   
   const [isListening, setIsListening] = useState(false);
+  const [inputText, setInputText] = useState('');
   const [transcript, setTranscript] = useState('');
   const [response, setResponse] = useState('');
   const [loading, setLoading] = useState(false);
@@ -62,6 +63,13 @@ const VoiceAssistantPage = () => {
       setIsSpeaking(false);
       recognitionRef.current?.start();
     }
+  };
+
+  const handleTextSubmit = (e) => {
+    e.preventDefault();
+    if (!inputText.trim()) return;
+    handleUserSpeech(inputText.trim());
+    setInputText('');
   };
 
   const handleUserSpeech = async (userText) => {
@@ -119,7 +127,7 @@ const VoiceAssistantPage = () => {
       }
 
       const genAI = new GoogleGenerativeAI(apiKey);
-      const model = genAI.getGenerativeModel({ model: "gemini-2.5-flash" });
+      const model = genAI.getGenerativeModel({ model: "gemini-1.5-flash" });
 
       const prompt = `You are a helpful digital literacy assistant named DigiSaathi AI based in India. 
       Help the user with their question about apps, smartphones, payments, Aadhaar, or online safety.
@@ -129,7 +137,8 @@ const VoiceAssistantPage = () => {
       User query: ${query}`;
 
       const result = await model.generateContent(prompt);
-      return result.response.text();
+      const response = await result.response;
+      return response.text();
     } catch (error) {
       console.warn("Gemini API Error:", error);
       return `Detailed Error: ${error.message}.`;
@@ -261,38 +270,52 @@ const VoiceAssistantPage = () => {
       )}
 
       {/* Bottom bar */}
-      <div className="bg-white border-t border-wa-border px-4 py-3 flex items-center justify-between gap-4">
-        {/* Transcript preview */}
-        <div className="flex-1 min-w-0 bg-wa-chatBg border border-wa-border rounded-2xl px-4 py-2.5">
-          <p className={`text-sm font-medium truncate ${transcript ? 'text-wa-text' : 'text-wa-subtext'}`}>
-            {isListening ? (t('listeningDotDotDot') || '🎙️ Listening...') : transcript || (t('tapMicToSpeak') || 'Tap mic to ask a question...')}
-          </p>
-        </div>
-        {/* Speak last response */}
-        {response && !isListening && (
-          <button
-            onClick={() => speakResponse(response, lang)}
-            className={`p-3 rounded-full border transition ${isSpeaking ? 'bg-wa-light border-wa-teal text-wa-teal' : 'bg-wa-chatBg border-wa-border text-wa-teal hover:bg-wa-light'}`}
+      <div className="bg-white border-t border-wa-border px-4 py-3 pb-safe">
+        {/* Transcript/Input preview */}
+        <div className="flex items-center gap-3">
+          <form onSubmit={handleTextSubmit} className="flex-1 flex items-center bg-wa-chatBg border border-wa-border rounded-2xl px-4 py-2">
+            <input
+              type="text"
+              value={isListening ? (transcript || t('listeningDotDotDot') || '🎙️ Listening...') : inputText}
+              onChange={(e) => setInputText(e.target.value)}
+              disabled={isListening || loading}
+              placeholder={t('askSomething') || "Ask something..."}
+              className={`flex-1 bg-transparent border-none outline-none text-sm font-medium ${isListening ? 'text-wa-teal animate-pulse italic' : 'text-wa-text'}`}
+            />
+            {inputText.trim() && !isListening && (
+              <button type="submit" className="text-wa-teal p-1">
+                <Send size={20} />
+              </button>
+            )}
+          </form>
+
+          {/* Speak last response */}
+          {response && !isListening && (
+            <button
+              onClick={() => speakResponse(response, lang)}
+              className={`p-3 rounded-full border transition ${isSpeaking ? 'bg-wa-light border-wa-teal text-wa-teal' : 'bg-wa-chatBg border-wa-border text-wa-teal hover:bg-wa-light'}`}
+            >
+              <Volume2 size={20} className={isSpeaking ? 'animate-pulse' : ''} />
+            </button>
+          )}
+
+          {/* Mic button */}
+          <motion.button
+            whileTap={{ scale: 0.9 }}
+            onClick={toggleListening}
+            disabled={loading}
+            className={`w-12 h-12 rounded-full flex items-center justify-center shadow-wa-lg transition-all relative shrink-0
+              ${isListening ? 'bg-red-500' : loading ? 'bg-wa-border' : 'bg-gradient-to-br from-wa-green to-wa-teal'}`}
           >
-            <Volume2 size={20} className={isSpeaking ? 'animate-pulse' : ''} />
-          </button>
-        )}
-        {/* Mic button */}
-        <motion.button
-          whileTap={{ scale: 0.9 }}
-          onClick={toggleListening}
-          disabled={loading}
-          className={`w-14 h-14 rounded-full flex items-center justify-center shadow-wa-lg transition-all relative shrink-0
-            ${isListening ? 'bg-red-500' : loading ? 'bg-wa-border' : 'bg-gradient-to-br from-wa-green to-wa-teal'}`}
-        >
-          {isListening && <span className="absolute inset-0 rounded-full bg-red-400 animate-ping opacity-50" />}
-          {loading
-            ? <Loader size={24} className="text-white animate-spin" />
-            : isListening
-              ? <MicOff size={24} className="text-white" />
-              : <Mic size={24} className="text-white" />
-          }
-        </motion.button>
+            {isListening && <span className="absolute inset-0 rounded-full bg-red-400 animate-ping opacity-50" />}
+            {loading
+              ? <Loader size={20} className="text-white animate-spin" />
+              : isListening
+                ? <MicOff size={20} className="text-white" />
+                : <Mic size={20} className="text-white" />
+            }
+          </motion.button>
+        </div>
       </div>
     </PageTransition>
   );

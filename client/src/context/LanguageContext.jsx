@@ -142,7 +142,10 @@ export const translations = {
       firstModule: "First Module",
       fraudFighter: "Fraud Fighter",
       sevenDayStreak: "7-Day Streak"
-    }
+    },
+    askSomething: "Ask something...",
+    listeningDotDotDot: "🎙️ Listening...",
+    voiceAssistant: "AI Assistant"
   },
   hi: {
     // Splash
@@ -250,7 +253,10 @@ export const translations = {
       firstModule: "पहला मॉड्यूल",
       fraudFighter: "धोखाधड़ी सेनानी",
       sevenDayStreak: "7 दिन की स्ट्रीक"
-    }
+    },
+    askSomething: "कुछ पूछें...",
+    listeningDotDotDot: "🎙️ सुन रहा हूँ...",
+    voiceAssistant: "AI सहायक"
   },
   mr: {
     // Splash

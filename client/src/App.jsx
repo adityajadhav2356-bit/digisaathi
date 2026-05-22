@@ -11,6 +11,7 @@ import ModulePage from './pages/ModulePage';
 import AlertsPage from './pages/AlertsPage';
 import ProfilePage from './pages/ProfilePage';
 import VoiceAssistantPage from './pages/VoiceAssistantPage';
+import MothersDayPage from './pages/MothersDayPage';
 
 // Volunteer Portal
 import VolunteerLogin from './pages/volunteer/VolunteerLogin';
@@ -34,6 +35,7 @@ const AnimatedRoutes = () => {
         <Route path="/alerts"         element={<AlertsPage />} />
         <Route path="/profile"        element={<ProfilePage />} />
         <Route path="/voice-assistant" element={<VoiceAssistantPage />} />
+        <Route path="/mothers-day"    element={<MothersDayPage />} />
         
         {/* Volunteer Portal Routes */}
         <Route path="/volunteer"           element={<VolunteerLogin />} />
