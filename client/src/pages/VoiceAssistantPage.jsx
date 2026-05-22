@@ -9,7 +9,7 @@ import { GoogleGenerativeAI } from '@google/generative-ai';
 const VoiceAssistantPage = () => {
   const navigate = useNavigate();
   const { lang, t } = useLanguage();
-  
+
   const [isListening, setIsListening] = useState(false);
   const [inputText, setInputText] = useState('');
   const [transcript, setTranscript] = useState('');
@@ -17,7 +17,7 @@ const VoiceAssistantPage = () => {
   const [loading, setLoading] = useState(false);
   const [isSpeaking, setIsSpeaking] = useState(false);
   const [history, setHistory] = useState([]);
-  
+
   const recognitionRef = useRef(null);
   const synthRef = useRef(window.speechSynthesis);
 
@@ -27,22 +27,22 @@ const VoiceAssistantPage = () => {
       const rec = new SR();
       rec.continuous = false;
       rec.interimResults = false;
-      
+
       // Configure with current language
       rec.lang = LANGUAGES[lang]?.voice || 'en-IN';
-      
+
       rec.onstart = () => setIsListening(true);
       rec.onend = () => setIsListening(false);
-      
+
       rec.onresult = event => {
         const text = event.results[0][0].transcript;
         setTranscript(text);
         handleUserSpeech(text, true);
       };
-      
+
       recognitionRef.current = rec;
     }
-    
+
     return () => {
       if (recognitionRef.current) recognitionRef.current.abort();
     };
@@ -76,7 +76,7 @@ const VoiceAssistantPage = () => {
     setLoading(true);
     const currentHistory = [...history];
     setHistory(h => [...h, { role: 'user', text: userText }]);
-    
+
     try {
       const botResponse = await processQuery(userText, lang, currentHistory);
       setResponse(botResponse);
@@ -94,20 +94,20 @@ const VoiceAssistantPage = () => {
 
   // Text-to-Speech in selected language
   const speakResponse = (text, currentLang) => {
-    synthRef.current?.cancel(); 
-    
+    synthRef.current?.cancel();
+
     const utterance = new SpeechSynthesisUtterance(text);
     const targetVoiceCode = LANGUAGES[currentLang]?.voice || 'en-IN';
     utterance.lang = targetVoiceCode;
-    utterance.rate = 0.85; 
+    utterance.rate = 0.85;
     utterance.pitch = 1.0;
     utterance.volume = 1.0;
 
     const voices = synthRef.current?.getVoices() || [];
-    const selectedVoice = voices.find(voice => 
+    const selectedVoice = voices.find(voice =>
       voice.lang === targetVoiceCode || voice.lang.startsWith(currentLang)
     );
-    
+
     if (selectedVoice) {
       utterance.voice = selectedVoice;
     }
@@ -122,12 +122,12 @@ const VoiceAssistantPage = () => {
   const processQuery = async (query, currentLang, chatHistory) => {
     try {
       const apiKey = import.meta.env.VITE_GEMINI_API_KEY;
-      if (!apiKey || apiKey === 'your_gemini_api_key_here') {
+      if (!apiKey) {
         throw new Error('Missing API Key');
       }
 
       const genAI = new GoogleGenerativeAI(apiKey);
-      const model = genAI.getGenerativeModel({ 
+      const model = genAI.getGenerativeModel({
         model: "gemini-1.5-flash"
       });
 
@@ -241,7 +241,7 @@ const VoiceAssistantPage = () => {
             </div>
             <div className="wa-bubble">
               <div className="flex gap-1.5 items-center py-1">
-                {[0,1,2].map(i => (
+                {[0, 1, 2].map(i => (
                   <motion.span
                     key={i}
                     className="w-2 h-2 rounded-full bg-wa-subtext block"
