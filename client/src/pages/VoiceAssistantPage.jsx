@@ -131,9 +131,6 @@ const VoiceAssistantPage = () => {
         model: "gemini-1.5-flash"
       });
 
-      // Gently append the language requirement to the query so we don't need a strict system prompt
-      const finalQuery = `[Please reply in language code: ${currentLang}] ${query}`;
-
       const formattedHistory = chatHistory.map(msg => ({
         role: msg.role === 'ai' ? 'model' : 'user',
         parts: [{ text: msg.text }],
@@ -143,7 +140,7 @@ const VoiceAssistantPage = () => {
         history: formattedHistory,
       });
 
-      const result = await chat.sendMessage(finalQuery);
+      const result = await chat.sendMessage(query);
       const response = await result.response;
       return response.text();
     } catch (error) {
