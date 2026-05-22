@@ -37,7 +37,7 @@ const VoiceAssistantPage = () => {
       rec.onresult = event => {
         const text = event.results[0][0].transcript;
         setTranscript(text);
-        handleUserSpeech(text);
+        handleUserSpeech(text, true);
       };
       
       recognitionRef.current = rec;
@@ -68,25 +68,25 @@ const VoiceAssistantPage = () => {
   const handleTextSubmit = (e) => {
     e.preventDefault();
     if (!inputText.trim()) return;
-    handleUserSpeech(inputText.trim());
+    handleUserSpeech(inputText.trim(), false);
     setInputText('');
   };
 
-  const handleUserSpeech = async (userText) => {
+  const handleUserSpeech = async (userText, wasSpoken = true) => {
     setLoading(true);
+    const currentHistory = [...history];
     setHistory(h => [...h, { role: 'user', text: userText }]);
     
     try {
-      // Offline fallback keyword logic matching the multilingual update structure
-      const botResponse = await processQuery(userText, lang);
+      const botResponse = await processQuery(userText, lang, currentHistory);
       setResponse(botResponse);
       setHistory(h => [...h, { role: 'ai', text: botResponse }]);
-      speakResponse(botResponse, lang);
+      if (wasSpoken) speakResponse(botResponse, lang);
     } catch {
       const err = getErrorMessage(lang);
       setResponse(err);
       setHistory(h => [...h, { role: 'ai', text: err }]);
-      speakResponse(err, lang);
+      if (wasSpoken) speakResponse(err, lang);
     } finally {
       setLoading(false);
     }
@@ -119,7 +119,7 @@ const VoiceAssistantPage = () => {
     synthRef.current?.speak(utterance);
   };
 
-  const processQuery = async (query, currentLang) => {
+  const processQuery = async (query, currentLang, chatHistory) => {
     try {
       const apiKey = import.meta.env.VITE_GEMINI_API_KEY;
       if (!apiKey || apiKey === 'your_gemini_api_key_here') {
@@ -127,16 +127,22 @@ const VoiceAssistantPage = () => {
       }
 
       const genAI = new GoogleGenerativeAI(apiKey);
-      const model = genAI.getGenerativeModel({ model: "gemini-1.5-flash" });
+      const model = genAI.getGenerativeModel({ 
+        model: "gemini-1.5-flash",
+        systemInstruction: `You are an intelligent, friendly AI assistant. Chat naturally with the user about literally anything they want—general knowledge, coding, daily life, jokes, advice, etc. 
+Be conversational, normal, and natural (like a real human chatting). You MUST reply in this language: ISO code ${currentLang}.`
+      });
 
-      const prompt = `You are a helpful digital literacy assistant named DigiSaathi AI based in India. 
-      Help the user with their question about apps, smartphones, payments, Aadhaar, or online safety.
-      Keep your answer very short, friendly, and directly helpful (1 to 3 sentences maximum). Make it conversational for voice output.
-      You MUST reply in the language specified by this ISO code: ${currentLang}.
-      
-      User query: ${query}`;
+      const formattedHistory = chatHistory.map(msg => ({
+        role: msg.role === 'ai' ? 'model' : 'user',
+        parts: [{ text: msg.text }],
+      }));
 
-      const result = await model.generateContent(prompt);
+      const chat = model.startChat({
+        history: formattedHistory,
+      });
+
+      const result = await chat.sendMessage(query);
       const response = await result.response;
       return response.text();
     } catch (error) {
@@ -195,7 +201,7 @@ const VoiceAssistantPage = () => {
           <div className="flex justify-start">
             <div className="wa-bubble max-w-xs text-base">
               <p className="font-medium text-wa-text">
-                👋 Namaste! I'm your DigiSaathi AI assistant. Ask me anything about digital literacy — UPI, WhatsApp, Aadhaar, or how to stay safe online!
+                👋 Namaste! I'm your DigiSaathi AI assistant. Ask me absolutely anything — from general knowledge and advice, to coding help and daily life questions!
               </p>
               <p className="text-wa-subtext text-xs mt-2 text-right">Now</p>
             </div>
