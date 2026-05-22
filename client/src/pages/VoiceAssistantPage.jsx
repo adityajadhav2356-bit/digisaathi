@@ -128,10 +128,11 @@ const VoiceAssistantPage = () => {
 
       const genAI = new GoogleGenerativeAI(apiKey);
       const model = genAI.getGenerativeModel({ 
-        model: "gemini-1.5-flash",
-        systemInstruction: `You are an intelligent, friendly AI assistant. Chat naturally with the user about literally anything they want—general knowledge, coding, daily life, jokes, advice, etc. 
-Be conversational, normal, and natural (like a real human chatting). You MUST reply in this language: ISO code ${currentLang}.`
+        model: "gemini-1.5-flash"
       });
+
+      // Gently append the language requirement to the query so we don't need a strict system prompt
+      const finalQuery = `[Please reply in language code: ${currentLang}] ${query}`;
 
       const formattedHistory = chatHistory.map(msg => ({
         role: msg.role === 'ai' ? 'model' : 'user',
@@ -142,7 +143,7 @@ Be conversational, normal, and natural (like a real human chatting). You MUST re
         history: formattedHistory,
       });
 
-      const result = await chat.sendMessage(query);
+      const result = await chat.sendMessage(finalQuery);
       const response = await result.response;
       return response.text();
     } catch (error) {
