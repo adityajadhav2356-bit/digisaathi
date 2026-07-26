@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Bell, User, CheckCircle, Video, PhoneCall, BookOpen, AlertTriangle, ChevronRight, Zap, Search, Mic } from 'lucide-react';
+import { Bell, User, CheckCircle, Video, PhoneCall, BookOpen, AlertTriangle, ChevronRight, Zap, Search, Mic, ShieldCheck } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import PageTransition from '../components/PageTransition';
 import { dummyUser } from '../data/user';
@@ -49,12 +49,12 @@ const HomePage = () => {
       {/* ── WhatsApp-style Header ── */}
       <header className="wa-header">
         <div className="flex items-center gap-3">
-          <div className="w-9 h-9 rounded-full bg-white/20 flex items-center justify-center">
-            <span className="text-white font-black text-sm">DS</span>
+          <div className="w-9 h-9 rounded-full bg-wa-dark/10 flex items-center justify-center border border-wa-border">
+            <span className="text-wa-teal font-black text-sm">DS</span>
           </div>
           <div>
             <h1 className="wa-header-title">DigiSaathi</h1>
-            <p className="text-white/70 text-xs font-medium">
+            <p className="text-wa-subtext text-xs font-bold">
               {t('greeting')?.replace('{name}', localizedUser.name?.split(' ')[0]) || `Hello, ${localizedUser.name?.split(' ')[0]}`}
             </p>
           </div>
@@ -63,22 +63,22 @@ const HomePage = () => {
           {/* Language Toggle */}
           <button
             onClick={() => { const langs = ['en','hi','mr','ta','bn']; setLang(langs[(langs.indexOf(lang)+1)%langs.length]); }}
-            className="text-white/80 hover:text-white text-xs font-bold px-2.5 py-1.5 rounded-full bg-white/15 hover:bg-white/25 transition border border-white/20"
+            className="text-wa-dark hover:bg-wa-dark hover:text-white text-xs font-bold px-2.5 py-1.5 rounded-full bg-wa-dark/10 transition border border-wa-border"
           >
             🌐 {lang === 'en' ? 'EN' : lang === 'hi' ? 'HI' : lang === 'mr' ? 'MR' : lang === 'ta' ? 'TA' : 'BN'}
           </button>
           {/* Notification */}
           <button
-            className="relative p-2 rounded-full hover:bg-white/15 transition"
+            className="relative p-2 rounded-full hover:bg-wa-dark/10 transition"
             aria-label="Notifications"
           >
-            <Bell size={20} className="text-white" />
-            <span className="absolute top-1.5 right-1.5 w-2.5 h-2.5 bg-red-400 rounded-full border-2 border-wa-teal animate-pulse" />
+            <Bell size={20} className="text-wa-dark" />
+            <span className="absolute top-1.5 right-1.5 w-2.5 h-2.5 bg-red-500 rounded-full border-2 border-white animate-pulse" />
           </button>
           {/* Profile */}
-          <button onClick={() => navigate('/profile')} className="p-1.5 rounded-full hover:bg-white/15 transition">
-            <div className="w-8 h-8 rounded-full bg-white/20 flex items-center justify-center">
-              <User size={16} className="text-white" />
+          <button onClick={() => navigate('/profile')} className="p-1.5 rounded-full hover:bg-wa-dark/10 transition">
+            <div className="w-8 h-8 rounded-full bg-wa-dark/10 flex items-center justify-center border border-wa-border">
+              <User size={16} className="text-wa-dark" />
             </div>
           </button>
         </div>
@@ -135,6 +135,24 @@ const HomePage = () => {
             <p className="text-red-800 font-semibold text-base truncate">{t('fakeKyc') || 'Fake KYC scam circulating — Stay alert!'}</p>
           </div>
           <ChevronRight size={18} className="text-red-400 shrink-0" />
+        </motion.button>
+
+        {/* ── Payment Safety Banner ── */}
+        <motion.button
+          initial={{ opacity: 0, x: -10 }} animate={{ opacity: 1, x: 0 }} transition={{ delay: 0.15 }}
+          whileTap={{ scale: 0.98 }}
+          onClick={() => navigate('/safety')}
+          className="w-full flex items-center gap-4 bg-gradient-to-r from-blue-600 to-indigo-600 rounded-2xl p-4 border border-blue-500 shadow-lg text-left overflow-hidden relative"
+        >
+          <div className="absolute top-0 right-0 w-24 h-24 bg-white/10 rounded-full blur-xl -mr-4 -mt-4"></div>
+          <div className="w-12 h-12 bg-white/20 rounded-full flex items-center justify-center shrink-0 border border-white/30 relative z-10 backdrop-blur-sm">
+            <ShieldCheck size={28} className="text-white" />
+          </div>
+          <div className="flex-1 min-w-0 relative z-10">
+            <p className="text-blue-100 font-bold text-xs uppercase tracking-widest mb-0.5">Protect Yourself</p>
+            <p className="text-white font-black text-lg leading-tight">AI Payment Safety & Fraud Protection</p>
+          </div>
+          <ChevronRight size={24} className="text-white shrink-0 relative z-10" />
         </motion.button>
 
         {/* ── Learning Modules ── */}
@@ -267,20 +285,21 @@ const HomePage = () => {
         </motion.div>
 
         {/* ── Quick Actions ── */}
-        <div className="grid grid-cols-3 gap-3">
+        <div className="grid grid-cols-4 gap-2">
           {[
             { icon: '💳', label: t('upiPayment') || 'UPI Payment', path: '/module/upi', color: 'bg-blue-50 text-blue-600 border-blue-100' },
             { icon: '💬', label: t('whatsapp')   || 'WhatsApp',    path: '/module/whatsapp', color: 'bg-green-50 text-green-600 border-green-100' },
             { icon: '🆔', label: t('aadhaar')    || 'Aadhaar',    path: '/module/aadhaar', color: 'bg-orange-50 text-orange-600 border-orange-100' },
+            { icon: '🏠', label: t('homeCareTitle')?.split(' ')[0] || 'Home Care', path: '/services', color: 'bg-purple-50 text-purple-600 border-purple-100' },
           ].map(q => (
             <motion.button
               key={q.label}
               whileTap={{ scale: 0.94 }}
               onClick={() => navigate(q.path)}
-              className={`flex flex-col items-center justify-center gap-2 p-4 rounded-2xl border ${q.color} transition-all`}
+              className={`flex flex-col items-center justify-center gap-2 p-3.5 rounded-2xl border ${q.color} transition-all`}
             >
               <span className="text-3xl">{q.icon}</span>
-              <span className="text-xs font-bold text-center leading-snug">{q.label}</span>
+              <span className="text-[11px] font-extrabold text-center leading-snug">{q.label}</span>
             </motion.button>
           ))}
         </div>

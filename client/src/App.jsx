@@ -19,6 +19,15 @@ import VolunteerLogin from './pages/volunteer/VolunteerLogin';
 import VolunteerDashboard from './pages/volunteer/VolunteerDashboard';
 import VolunteerVerification from './pages/volunteer/VolunteerVerification';
 
+// Payment Safety Module
+import PaymentSafetyDashboard from './pages/safety/PaymentSafetyDashboard';
+import TransactionRiskAnalysis from './pages/safety/TransactionRiskAnalysis';
+import SafePaymentSimulator from './pages/safety/SafePaymentSimulator';
+import EmergencyHelp from './pages/safety/EmergencyHelp';
+import ScamAwarenessCenter from './pages/safety/ScamAwarenessCenter';
+import QRCodeSafetyChecker from './pages/safety/QRCodeSafetyChecker';
+import TrustedContacts from './pages/safety/TrustedContacts';
+
 import { LanguageProvider } from './context/LanguageContext';
 
 const AnimatedRoutes = () => {
@@ -44,6 +53,15 @@ const AnimatedRoutes = () => {
         <Route path="/volunteer"              element={<VolunteerLogin />} />
         <Route path="/volunteer/dashboard"    element={<VolunteerDashboard />} />
         <Route path="/volunteer/verification" element={<VolunteerVerification />} />
+
+        {/* Payment Safety Module Routes */}
+        <Route path="/safety"                  element={<PaymentSafetyDashboard />} />
+        <Route path="/safety/risk-analysis"    element={<TransactionRiskAnalysis />} />
+        <Route path="/safety/simulator"        element={<SafePaymentSimulator />} />
+        <Route path="/safety/emergency"        element={<EmergencyHelp />} />
+        <Route path="/safety/awareness"        element={<ScamAwarenessCenter />} />
+        <Route path="/safety/qr-scanner"       element={<QRCodeSafetyChecker />} />
+        <Route path="/safety/trusted-contacts" element={<TrustedContacts />} />
       </Routes>
     </AnimatePresence>
   );
