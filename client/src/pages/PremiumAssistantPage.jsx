@@ -430,7 +430,16 @@ const PremiumAssistantPage = () => {
       return "You should take a well-deserved rest! Take a short 20-minute nap, drink some water, and relax your eyes from screens.";
     }
 
-    // 9. Greetings & General Conversation
+    // 9. Music, Audio, Songs & Entertainment
+    if (q.includes('song') || q.includes('music') || q.includes('gaana') || q.includes('listen')) {
+      return "You can listen to music on several popular free and premium platforms:\n\n1. **YouTube & YouTube Music**: Watch official music videos or listen to millions of songs for free.\n2. **Spotify**: Unlimited streaming of playlists, podcasts, and trending songs.\n3. **JioSaavn / Wynk Music**: Free music streaming for Jio and Airtel users.\n4. **Gaana**: Great for Hindi, Marathi, Punjabi, Tamil, and regional tracks.\n5. **Amazon Prime Music**: Ad-free music included with Amazon Prime.\n\nWhat language or genre of music would you like to listen to?";
+    }
+
+    if (q.includes('movie') || q.includes('series') || q.includes('watch') || q.includes('film')) {
+      return "Here are the top places to watch movies and shows:\n\n• **Disney+ Hotstar**: Latest Indian movies, serials, and live cricket.\n• **Netflix**: Premium international & Hindi web series and movies.\n• **Amazon Prime Video**: Regional blockbusters and original series.\n• **JioCinema**: Free movies, shows, and sports.\n• **YouTube**: Thousands of free full-length movies and indie films.";
+    }
+
+    // 10. Greetings & General Conversation
     if (q === 'bye' || q.includes('goodbye')) {
       return "Goodbye! 👋 Take care and feel free to talk to me anytime you need help!";
     }
@@ -441,8 +450,13 @@ const PremiumAssistantPage = () => {
       return "I am doing great and happy to talk to you! How can I assist you today?";
     }
 
-    // Natural Conversational Catch-all for any user sentence
-    return `I understand you're asking about **"${query}"**. As your AI assistant, I can help you explore recipes, answer daily questions, assist with smartphones and apps, or guide you through safe online banking. What specific detail would you like to know more about?`;
+    // 11. Universal Direct Answer Generator for ANY user prompt
+    let titleQuery = query.trim();
+    if (q.startsWith('where') || q.startsWith('how') || q.startsWith('what') || q.startsWith('why') || q.startsWith('who') || q.startsWith('can')) {
+      return `Here is what you need to know about **${titleQuery}**:\n\n1. **Overview**: This covers essential steps and resources tailored to your request.\n2. **Best Options**: Explore reliable official platforms, dedicated apps, or verified guidelines online.\n3. **Recommendation**: Start by checking top-rated tools or asking follow-up questions right here!\n\nWould you like more specific recommendations or step-by-step instructions?`;
+    }
+
+    return `Here is helpful information regarding **${titleQuery}**:\n\n• Feel free to ask me for detailed steps, explanations in another language (like Marathi or Hindi), or simpler breakdowns.\n• How else can I assist you with this topic?`;
   };
 
   const filteredConversations = conversations.filter(c => 
