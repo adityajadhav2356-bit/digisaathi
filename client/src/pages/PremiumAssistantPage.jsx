@@ -268,7 +268,7 @@ const PremiumAssistantPage = () => {
       const apiKey = import.meta.env.VITE_GEMINI_API_KEY || (apiKeyPart1 + apiKeyPart2 + apiKeyPart3);
       
       const models = ['gemini-1.5-flash', 'gemini-2.0-flash', 'gemini-pro'];
-      const systemInstruction = "You are DigiSaathi, a friendly digital literacy AI assistant for senior citizens in India. Answer in simple, clear, encouraging sentences (2-3 sentences max). Answer in the language of the user's question.";
+      const systemInstruction = "You are DigiSaathi AI, a warm, friendly, and informal AI companion. Chat naturally about ANYTHING the user asks — general conversation, jokes, weather, greetings, recipes, life, as well as digital skills. Keep responses short (2-3 sentences max), warm, and answer in the same language as the user's question.";
       
       for (const modelName of models) {
         try {
@@ -295,16 +295,17 @@ const PremiumAssistantPage = () => {
 
     if (fallbackAnswer) return fallbackAnswer;
 
-    // Smart contextual fallback generator for any custom question
+    // Smart conversational fallback generator for any custom question
     const qLower = query.toLowerCase();
+    if (qLower.includes('hi') || qLower.includes('hello') || qLower.includes('namaste')) return "Hello! How are you doing today? I am here to chat with you about anything you like!";
+    if (qLower.includes('how are you')) return "I am doing wonderful, thank you for asking! How can I brighten your day today?";
+    if (qLower.includes('joke')) return "Why don't scientists trust atoms? Because they make up everything! Hope that brought a smile to your face!";
     if (qLower.includes('pin')) return "Your UPI PIN is your private password. Never share it with anyone. You only enter PIN to send money, never to receive money.";
-    if (qLower.includes('otp')) return "An OTP (One Time Password) is a temporary code sent to your phone. Bank officials will NEVER ask for your OTP over phone.";
+    if (qLower.includes('otp')) return "An OTP (One Time Password) is a temporary security code. Bank officials will NEVER ask for your OTP over phone.";
     if (qLower.includes('scam') || qLower.includes('fraud') || qLower.includes('fake')) return "If you suspect a scam, hang up immediately! Call national cybercrime helpline 1930 or freeze your bank account through official banking apps.";
     if (qLower.includes('money') || qLower.includes('pay') || qLower.includes('send')) return "To send money safely, scan the merchant's QR code, verify their name on screen, enter the amount, and type your secret PIN.";
-    if (qLower.includes('bank') || qLower.includes('account')) return "Always visit your official bank branch or use the phone number printed on the back of your ATM card. Never search bank numbers on Google.";
-    if (qLower.includes('aadhaar') || qLower.includes('digilocker')) return "DigiLocker is a government-verified digital vault. You can download and share your Aadhaar or PAN card safely from DigiLocker.";
 
-    return `Regarding "${query}": As a digital literacy safety rule, always keep your credentials secret, double-check transaction amounts, and never trust strangers asking for remote access or OTPs!`;
+    return `That's a great question about "${query}"! I'm always happy to chat, help you learn, and keep you safe online. What else would you like to talk about?`;
   };
 
   const processQuery = async (queryText, fallbackAnswer) => {
