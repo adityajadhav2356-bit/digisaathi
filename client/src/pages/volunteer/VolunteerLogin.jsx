@@ -75,9 +75,15 @@ const VolunteerLogin = () => {
           </form>
         </div>
 
-        <button onClick={() => navigate('/')} className="w-full mt-6 text-slate-400 font-bold text-sm hover:text-slate-600 transition">
-          ← Back to Senior App
-        </button>
+        <div className="flex flex-col gap-3 mt-6">
+          <button onClick={() => navigate('/volunteer/verification')} className="w-full bg-slate-100 hover:bg-slate-200 text-slate-700 font-bold text-base rounded-2xl h-14 flex items-center justify-center gap-2 transition-colors border border-slate-300">
+            <ShieldCheck size={20} className="text-blue-600" /> Apply for Govt Identity Verification
+          </button>
+          
+          <button onClick={() => navigate('/')} className="w-full text-slate-400 font-bold text-sm hover:text-slate-600 transition">
+            ← Back to Senior App
+          </button>
+        </div>
 
       </motion.div>
     </PageTransition>
