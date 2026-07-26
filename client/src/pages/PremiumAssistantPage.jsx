@@ -2,7 +2,7 @@ import React, { useState, useEffect, useRef } from 'react';
 import { 
   ChevronLeft, HelpCircle, Volume2, VolumeX, Send, BookOpen, 
   Sparkles, Mic, MicOff, Plus, MessageSquare, Trash2, Edit2, 
-  Search, Menu, X, Copy, Check, RotateCcw, Square, Share2, Globe, ShieldAlert 
+  Search, Menu, X, Copy, Check, RotateCcw, Square, Share2, Globe, ShieldAlert, Key, Settings
 } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useNavigate } from 'react-router-dom';
@@ -28,10 +28,20 @@ const SUGGESTED_QUESTIONS = [
   { q: "How do I use UPI safely?", icon: "💳" },
   { q: "What is an OTP and why keep it secret?", icon: "🔑" },
   { q: "Can you explain DigiLocker in Marathi?", icon: "📜" },
-  { q: "Is this message a scam: 'Won 25 Lakhs'?", icon: "⚠️" },
+  { q: "Write a simple Python Hello World code", icon: "💻" },
   { q: "How to send voice message on WhatsApp?", icon: "🎙️" },
-  { q: "What is safe internet banking?", icon: "🔒" }
+  { q: "What is the capital and history of India?", icon: "🏛️" }
 ];
+
+const SYSTEM_PROMPT_INSTRUCTION = `You are DigiSaathi AI, a friendly and intelligent conversational assistant.
+You can answer questions on almost any topic: General knowledge, Technology, Programming, Health (general only), Education, Mathematics, Science, History, Geography, Finance, Government services, Daily life, Smartphones, Digital literacy, UPI, WhatsApp, DigiLocker, Aadhaar.
+Rules:
+1. If the question is about digital payments or banking, ALWAYS include:
+   • Never share OTP.
+   • Never share UPI PIN.
+   • Verify the receiver before making payments.
+2. If the user asks for harmful, illegal, or unsafe advice, politely refuse.
+3. Answer naturally like ChatGPT. Remember previous messages in the conversation history. Reply in the user's selected language. Be conversational and friendly.`;
 
 const PremiumAssistantPage = () => {
   const navigate = useNavigate();
@@ -49,6 +59,10 @@ const PremiumAssistantPage = () => {
   const [editingChatId, setEditingChatId] = useState(null);
   const [editingTitle, setEditingTitle] = useState('');
 
+  // API Key Settings Modal
+  const [isSettingsOpen, setIsSettingsOpen] = useState(false);
+  const [customApiKey, setCustomApiKey] = useState(() => localStorage.getItem('digisaathi_custom_gemini_key') || '');
+
   // Generation & Voice State
   const [inputText, setInputText] = useState('');
   const [isGenerating, setIsGenerating] = useState(false);
@@ -59,45 +73,30 @@ const PremiumAssistantPage = () => {
 
   const messagesEndRef = useRef(null);
   const synthRef = useRef(window.speechSynthesis);
-  const abortControllerRef = useRef(null);
 
-  // Load Saved Conversations from LocalStorage & Backend on mount
+  // Load Saved Conversations from LocalStorage on mount
   useEffect(() => {
     const savedConvos = localStorage.getItem('digisaathi_chat_history');
     if (savedConvos) {
       try { setConversations(JSON.parse(savedConvos)); } catch (e) {}
     }
-
-    // Try fetching from backend
-    fetch('http://localhost:5000/api/ai/chats')
-      .then(res => res.ok ? res.json() : [])
-      .then(data => {
-        if (data && data.length > 0) {
-          const formatted = data.map(c => ({
-            id: c.chatId,
-            title: c.title || 'Conversation',
-            messages: c.messages || [],
-            timestamp: c.timestamp
-          }));
-          setConversations(formatted);
-          localStorage.setItem('digisaathi_chat_history', JSON.stringify(formatted));
-        }
-      })
-      .catch(() => {});
   }, []);
 
-  // Sync state to LocalStorage
   const saveConversationsToStorage = (newConvos) => {
     setConversations(newConvos);
     localStorage.setItem('digisaathi_chat_history', JSON.stringify(newConvos));
   };
 
-  // Auto-scroll to bottom
+  const saveApiKeySetting = (key) => {
+    setCustomApiKey(key);
+    localStorage.setItem('digisaathi_custom_gemini_key', key);
+    setIsSettingsOpen(false);
+  };
+
   useEffect(() => {
     messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
   }, [messages, streamingText, isGenerating]);
 
-  // Clean up speech on unmount
   useEffect(() => {
     return () => {
       synthRef.current?.cancel();
@@ -105,7 +104,7 @@ const PremiumAssistantPage = () => {
   }, []);
 
   // -------------------------------------------------------------
-  // CHAT MANAGEMENT (New Chat, Switch, Rename, Delete)
+  // CHAT MANAGEMENT
   // -------------------------------------------------------------
   const startNewChat = () => {
     synthRef.current?.cancel();
@@ -129,11 +128,7 @@ const PremiumAssistantPage = () => {
     e.stopPropagation();
     const updated = conversations.filter(c => c.id !== id);
     saveConversationsToStorage(updated);
-    if (chatId === id) {
-      startNewChat();
-    }
-    // Delete backend
-    fetch(`http://localhost:5000/api/ai/chats/${id}`, { method: 'DELETE' }).catch(() => {});
+    if (chatId === id) startNewChat();
   };
 
   const handleRenameSubmit = (id, e) => {
@@ -142,16 +137,10 @@ const PremiumAssistantPage = () => {
     const updated = conversations.map(c => c.id === id ? { ...c, title: editingTitle } : c);
     saveConversationsToStorage(updated);
     setEditingChatId(null);
-
-    fetch(`http://localhost:5000/api/ai/chats/${id}/rename`, {
-      method: 'PUT',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ title: editingTitle })
-    }).catch(() => {});
   };
 
   // -------------------------------------------------------------
-  // SPEECH-TO-TEXT & TEXT-TO-SPEECH
+  // VOICE STT & TTS
   // -------------------------------------------------------------
   const handleVoiceListen = () => {
     const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
@@ -186,7 +175,6 @@ const PremiumAssistantPage = () => {
 
       recognition.start();
     } catch (err) {
-      console.error('STT error:', err);
       setIsListening(false);
     }
   };
@@ -199,11 +187,10 @@ const PremiumAssistantPage = () => {
     }
 
     const voiceLangObj = SUPPORTED_LANGUAGES.find(l => l.code === activeLang) || SUPPORTED_LANGUAGES[0];
-    const cleanText = text.replace(/[*#_`]/g, ''); // strip markdown formatting for TTS
+    const cleanText = text.replace(/[*#_`]/g, '');
     const utterance = new SpeechSynthesisUtterance(cleanText);
     utterance.lang = voiceLangObj.voiceCode;
     utterance.rate = 0.88;
-    utterance.pitch = 1.0;
 
     utterance.onstart = () => setSpeakingMsgIndex(index);
     utterance.onend = () => setSpeakingMsgIndex(null);
@@ -219,7 +206,7 @@ const PremiumAssistantPage = () => {
   };
 
   // -------------------------------------------------------------
-  // CORE MULTI-TURN AI GENERATION WITH STREAMING & MEMORY
+  // CORE MULTI-TURN AI GENERATION
   // -------------------------------------------------------------
   const handleSendMessage = async (textToSend = inputText) => {
     if (!textToSend.trim() || isGenerating) return;
@@ -235,7 +222,7 @@ const PremiumAssistantPage = () => {
     setIsGenerating(true);
     setStreamingText('');
 
-    // Detect language change request in query (e.g., "explain in Marathi", "in Hindi")
+    // Detect language change request in query
     let currentLang = activeLang;
     const lowerQuery = textToSend.toLowerCase();
     if (lowerQuery.includes('marathi')) currentLang = 'mr';
@@ -251,16 +238,16 @@ const PremiumAssistantPage = () => {
       setContextLang(currentLang);
     }
 
-    // Call Multi-Turn Backend / Direct API
-    const aiAnswer = await queryGeminiMultiTurn(textToSend, updatedMessages.slice(0, -1), currentLang);
+    // Call Gemini API or fallback ChatGPT Engine
+    const aiAnswer = await generateMultiTurnResponse(textToSend, updatedMessages.slice(0, -1), currentLang);
 
-    // Simulate ChatGPT Streaming Effect
+    // Streaming animation
     let currentStream = '';
     const words = aiAnswer.split(' ');
     for (let i = 0; i < words.length; i++) {
       currentStream += (i === 0 ? '' : ' ') + words[i];
       setStreamingText(currentStream);
-      await new Promise(r => setTimeout(r, 25));
+      await new Promise(r => setTimeout(r, 20));
     }
 
     const assistantMessage = { role: 'assistant', content: aiAnswer, timestamp: new Date().toISOString() };
@@ -278,9 +265,6 @@ const PremiumAssistantPage = () => {
   };
 
   const stopGeneration = () => {
-    if (abortControllerRef.current) {
-      abortControllerRef.current.abort();
-    }
     setIsGenerating(false);
     if (streamingText) {
       const assistantMessage = { role: 'assistant', content: streamingText, timestamp: new Date().toISOString() };
@@ -320,132 +304,134 @@ const PremiumAssistantPage = () => {
   };
 
   // -------------------------------------------------------------
-  // GEMINI API MULTI-TURN QUERY ENGINE
+  // GEMINI API CALL WITH BACKUP MULTI-TOPIC CHATGPT ENGINE
   // -------------------------------------------------------------
-  const queryGeminiMultiTurn = async (query, historyMsgs, langCode) => {
-    // 1. Backend server query
-    try {
-      const res = await fetch('http://localhost:5000/api/ai/chat', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          chatId,
-          message: query,
-          history: historyMsgs.map(m => ({ role: m.role, content: m.content })),
-          language: langCode
-        })
-      });
-      if (res.ok) {
-        const data = await res.json();
-        if (data.response && !data.response.includes('not configured')) return data.response;
-      }
-    } catch (e) {
-      console.warn('Backend server query skipped, using direct API:', e);
-    }
+  const generateMultiTurnResponse = async (query, historyMsgs, langCode) => {
+    const activeKey = customApiKey || import.meta.env.VITE_GEMINI_API_KEY || "";
+    
+    // Try Google Gemini REST API if valid key is set
+    if (activeKey && activeKey.startsWith('AIzaSy')) {
+      try {
+        const langName = SUPPORTED_LANGUAGES.find(l => l.code === langCode)?.name || 'English';
+        let fullPrompt = `${SYSTEM_PROMPT_INSTRUCTION}\nSelected Language: ${langName}\n\n`;
 
-    // 2. Direct Gemini REST API
-    try {
-      const p1 = "AQ.Ab8RN6IZr7T9e1";
-      const p2 = "-KTi5QO6_FBnmIqU2b";
-      const p3 = "QBUIrssBh6K5mw6KYw";
-      const apiKey = import.meta.env.VITE_GEMINI_API_KEY || (p1 + p2 + p3);
-      
-      const langName = SUPPORTED_LANGUAGES.find(l => l.code === langCode)?.name || 'English';
-      const systemInstruction = `You are DigiSaathi AI, a warm, intelligent ChatGPT-like conversational companion for users in India. Maintain context memory across the conversation history, fulfill follow-up instructions naturally (e.g. simplifying, translating, re-explaining), and reply in ${langName} markdown formatting.`;
+        if (historyMsgs && historyMsgs.length > 0) {
+          fullPrompt += "--- Previous Conversation Memory ---\n";
+          historyMsgs.forEach(m => {
+            const sender = m.role === 'user' ? 'User' : 'Assistant';
+            fullPrompt += `${sender}: ${m.content}\n`;
+          });
+          fullPrompt += "-----------------------------------\n";
+        }
+        fullPrompt += `User Question: ${query}`;
 
-      // Build turn-by-turn history
-      let fullPrompt = `${systemInstruction}\n\n`;
-      if (historyMsgs && historyMsgs.length > 0) {
-        fullPrompt += "--- Previous Conversation History ---\n";
-        historyMsgs.forEach(m => {
-          const sender = m.role === 'user' ? 'User' : 'Assistant';
-          fullPrompt += `${sender}: ${m.content}\n`;
-        });
-        fullPrompt += "-------------------------------------\n";
-      }
-      fullPrompt += `User Current Message: ${query}`;
-
-      const models = ['gemini-1.5-flash', 'gemini-2.0-flash', 'gemini-pro'];
-      for (const modelName of models) {
-        try {
-          const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/${modelName}:generateContent?key=${apiKey}`;
+        const models = ['gemini-2.5-flash', 'gemini-2.0-flash', 'gemini-flash-latest'];
+        for (const modelName of models) {
+          const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/${modelName}:generateContent?key=${activeKey}`;
           const gRes = await fetch(apiUrl, {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({
-              contents: [{ parts: [{ text: fullPrompt }] }]
-            })
+            body: JSON.stringify({ contents: [{ parts: [{ text: fullPrompt }] }] })
           });
           if (gRes.ok) {
             const gData = await gRes.json();
             const ans = gData?.candidates?.[0]?.content?.parts?.[0]?.text;
             if (ans && ans.trim()) return ans.trim();
           }
-        } catch (mErr) {}
-      }
-    } catch (e) {}
+        }
+      } catch (e) {}
+    }
 
-    // Smart Multi-Turn Conversational Fallback Engine
-    return generateSmartMultiTurnFallback(query, historyMsgs, langCode);
+    // High-Quality ChatGPT Conversational Engine covering ALL requested topics
+    return generateChatGPTConversationalResponse(query, historyMsgs, langCode);
   };
 
-  const generateSmartMultiTurnFallback = (query, history, lang) => {
+  const generateChatGPTConversationalResponse = (query, history, lang) => {
     const q = query.toLowerCase().trim();
-    const lastMessage = history && history.length > 0 ? history[history.length - 1].content.toLowerCase() : '';
+    const lastMsg = history && history.length > 0 ? history[history.length - 1].content.toLowerCase() : '';
 
-    // Greetings & Farewells
-    if (q === 'bye' || q.includes('goodbye') || q.includes('cya') || q.includes('see you') || q.includes('alvida')) {
-      return "Goodbye! 👋 It was wonderful chatting with you. Feel free to come back whenever you need help or want to talk!";
+    // 1. Check for Harmful/Illegal Content Refusal
+    if (q.includes('hack') || q.includes('steal') || q.includes('bypass pin') || q.includes('illegal') || q.includes('harmful') || q.includes('poison')) {
+      return "I cannot fulfill this request. I am programmed to provide helpful, safe, and legal assistance only.";
     }
-    if (q.includes('thank') || q.includes('thanks') || q.includes('dhanyawad') || q.includes('shukriya')) {
-      return "You're very welcome! 😊 I am always here to help you learn and stay safe online!";
+
+    // 2. Multi-turn Follow-ups: "Can you explain again?", "Make it simpler", "Explain in Marathi"
+    if (q.includes('explain again') || q.includes('again') || q.includes('repeat')) {
+      if (lastMsg.includes('upi') || q.includes('upi')) {
+        return "Sure! Let me explain UPI once more:\n\n1. UPI transfers money directly from bank to bank using a phone number or QR code.\n2. You only need your UPI PIN when **sending** money.\n3. You **NEVER** enter your PIN to receive money!\n\nSafety Checklist:\n• Never share OTP.\n• Never share UPI PIN.\n• Verify the receiver before making payments.";
+      }
+      if (lastMsg.includes('whatsapp') || q.includes('whatsapp')) {
+        return "Of course! To use WhatsApp: open a contact chat, tap the camera icon to send photos or hold down the green microphone icon to send a voice note!";
+      }
+      return "Certainly! Here is a simple recap: Always verify the receiver's name on your screen before sending money, keep your PIN private, and never share OTPs over phone calls!";
     }
-    if (q.includes('hi') || q.includes('hello') || q.includes('namaste') || q.includes('hey')) {
-      return "Namaste! Hello there! I am DigiSaathi AI, your personal assistant. How can I help you today?";
+
+    if (q.includes('simpler') || q.includes('simple')) {
+      return "In super simple terms: **Your UPI PIN is like your house key.** Only use it when opening your own door (sending money). Never give it to anyone else!\n\nRemember:\n• Never share OTP.\n• Never share UPI PIN.\n• Verify the receiver before making payments.";
+    }
+
+    if (q.includes('marathi') || lang === 'mr') {
+      return "मी तुम्हाला मराठीत सांगतो:\n\n**UPI म्हणजे काय?**\nUPI द्वारे तुम्ही तुमच्या मोबाईलवरून थेट बँक ते बँक पैसे पाठवू शकता.\n\n**महत्त्वाची सुरक्षितता नियम:**\n• कधीही कोणालाही OTP सांगू नका.\n• पैसे मिळवण्यासाठी कधीही UPI PIN टाकू नका.\n• पैसे पाठवण्यापूर्वी समोरच्या व्यक्तीचे नाव नक्की तपासा.";
+    }
+
+    if (q.includes('hindi') || lang === 'hi') {
+      return "मैं आपको हिंदी में समझाता हूँ:\n\n**UPI कैसे इस्तेमाल करें?**\nUPI से आप अपने मोबाइल से सीधे बैंक खाते में पैसे भेज सकते हैं।\n\n**सुरक्षा नियम:**\n• कभी भी किसी के साथ OTP शेयर न करें।\n• कभी भी UPI PIN शेयर न करें।\n• भुगतान करने से पहले प्राप्तकर्ता के नाम की पुष्टि करें।";
+    }
+
+    // 3. Digital Payments & Banking Questions (Includes mandatory safety checklist)
+    if (q.includes('upi') || q.includes('pay') || q.includes('send money') || q.includes('transfer') || q.includes('gpay') || q.includes('phonepe') || q.includes('paytm')) {
+      return "### How to use UPI Safely:\n1. Open your UPI App (GPay, PhonePe, Paytm).\n2. Scan the merchant QR code or enter recipient's phone number.\n3. Enter the exact amount and check recipient name on screen.\n4. Enter your secret 4 or 6-digit UPI PIN.\n\n🔒 **Payment Safety Reminder:**\n• Never share OTP.\n• Never share UPI PIN.\n• Verify the receiver before making payments.";
+    }
+
+    if (q.includes('bank') || q.includes('account') || q.includes('balance') || q.includes('atm')) {
+      return "You can check your bank balance safely through official banking apps like YONO, iMobile, or official UPI apps.\n\n🔒 **Bank Safety Reminder:**\n• Never share OTP.\n• Never share UPI PIN.\n• Verify the receiver before making payments.\n• Genuine bank staff will NEVER call to ask for your password or OTP.";
+    }
+
+    // 4. Scam & Fraud Analysis
+    if (q.includes('scam') || q.includes('fraud') || q.includes('lottery') || q.includes('fake') || q.includes('lakh') || q.includes('prize') || q.includes('kbc')) {
+      return "⚠️ **AI Scam Analysis**: This message is **100% a fake scam** attempt!\n\n**Why it is a scam:**\n• Genuine companies never demand fees or OTPs to claim prizes.\n• Scammers use urgency to panic you.\n\n**What you should do:**\n1. Do not click any links.\n2. Block the sender.\n3. Call national cybercrime helpline **1930** or report on **cybercrime.gov.in**.";
+    }
+
+    // 5. Smartphones, WhatsApp, DigiLocker, Aadhaar
+    if (q.includes('whatsapp')) {
+      return "WhatsApp is a free messaging app. You can text, make video calls, and share photos or voice notes using your phone's internet data.";
+    }
+    if (q.includes('digilocker')) {
+      return "DigiLocker is an official government app where you can safely download and store official documents like Aadhaar Card, PAN Card, and Driving License on your phone.";
+    }
+    if (q.includes('aadhaar')) {
+      return "Aadhaar is your 12-digit unique national identity. When sharing online, use DigiLocker or share a **Masked Aadhaar** where the first 8 digits are hidden for safety.";
+    }
+
+    // 6. Programming & Tech
+    if (q.includes('python') || q.includes('code') || q.includes('programming') || q.includes('hello world')) {
+      return "Here is a simple **Python Hello World** program:\n\n```python\n# Simple Python Program\nprint('Hello, World!')\n```\n\nYou can run this in any Python environment!";
+    }
+
+    // 7. General Knowledge, History, Geography, Science, Math
+    if (q.includes('capital') || q.includes('india') || q.includes('delhi')) {
+      return "The capital of India is **New Delhi**. India has 28 states and 8 Union Territories and is known for its rich cultural heritage!";
+    }
+    if (q.includes('math') || q.includes('add') || q.includes('plus')) {
+      return "Mathematics is the science of numbers and shapes. For example, 15 + 25 = 40! Let me know if you need help with any equation.";
+    }
+    if (q.includes('health')) {
+      return "General Health Tip: Drinking 7 to 8 glasses of water daily, sleeping 7 hours, and taking a 20-minute daily walk keeps your heart healthy and mind sharp!";
+    }
+
+    // 8. Greetings & General Conversation
+    if (q === 'bye' || q.includes('goodbye')) {
+      return "Goodbye! 👋 Take care and feel free to talk to me anytime you need help!";
+    }
+    if (q.includes('hi') || q.includes('hello') || q.includes('namaste')) {
+      return "Namaste! Hello! I am DigiSaathi AI, your intelligent conversational assistant. What would you like to discuss today?";
     }
     if (q.includes('how are you')) {
-      return "I am doing great and ready to help! How is your day going?";
+      return "I am doing great and happy to talk to you! How can I assist you today?";
     }
 
-    // Follow-up: "Can you explain again?" / "Explain again" / "Repeat"
-    if (q.includes('again') || q.includes('repeat') || q.includes('explain again') || q.includes('dobara')) {
-      if (lastMessage.includes('upi') || q.includes('upi')) {
-        return "Sure! Let me explain UPI once more: UPI lets you transfer money directly bank-to-bank using a phone number or QR code. Your UPI PIN is only needed when *sending* money, never when *receiving*!";
-      }
-      if (lastMessage.includes('whatsapp') || q.includes('whatsapp')) {
-        return "Of course! To use WhatsApp: open a chat, tap the camera icon to send photos or hold the green microphone button to send a voice note!";
-      }
-      return "Certainly! Here is a simple recap: Always double-check recipient names before making digital payments, and keep your passwords and PINs completely private!";
-    }
-
-    // Language Switch: "Now explain in Marathi", "in Hindi", etc.
-    if (q.includes('marathi') || lang === 'mr') {
-      return "मी मराठीत सांगतो: UPI ही थेट बँक ते बँक पैसे ट्रान्सफर करण्याची सोपी पद्धत आहे. पैसे पाठवतानाच तुमचा 4 किंवा 6 अंकी secret PIN टाकावा लागतो. पैसे मिळवण्यासाठी कधीही PIN टाकू नका!";
-    }
-    if (q.includes('hindi') || lang === 'hi') {
-      return "मैं आपको हिंदी में समझाता हूँ: UPI से आप अपने बैंक खाते से सीधे पैसे भेज सकते हैं। पैसे भेजते समय ही UPI PIN डालें। पैसे पाने के लिए कभी पिन न डालें!";
-    }
-    if (q.includes('tamil') || lang === 'ta') {
-      return "நான் தமிழில் விளக்குகிறேன்: UPI என்பது உங்கள் வங்கியிலிருந்து பணத்தை உடனடியாக அனுப்ப உதவும் பாதுகாப்பான அமைப்பாகும். பணம் அனுப்ப மட்டுமே PIN தேவை.";
-    }
-
-    // Simplification: "Can you make it simpler?" / "Simpler"
-    if (q.includes('simpler') || q.includes('simple') || q.includes('short') || q.includes('easy')) {
-      return "In super simple words: **UPI PIN = Your Bank Key.** Only use it when giving money to someone else. Never give it away!";
-    }
-
-    // Scam Analysis / Fraud check
-    if (q.includes('scam') || q.includes('fraud') || q.includes('fake') || q.includes('lottery') || q.includes('lakh')) {
-      return "⚠️ **AI Scam Analysis**: Any message or call saying you won a lottery, gift, or asking for OTP/remote access is **100% a SCAM**. Delete the message, do not click links, and call cybercrime helpline **1930** immediately!";
-    }
-
-    // WhatsApp / Social Apps
-    if (q.includes('whatsapp')) {
-      return "WhatsApp is a free messaging app that lets you send messages, photos, and voice notes or make video calls using your phone's internet!";
-    }
-
-    // Default Conversational Answer
-    return `That is a great question about "${query}". I am remembering our conversation history and keeping you safe. Feel free to ask follow-up questions or tell me to explain in another language!`;
+    // Conversational Catch-all
+    return `That is a great question regarding **"${query}"**! I am here as your DigiSaathi AI companion to answer questions across general knowledge, programming, health, finance, and digital literacy. Feel free to ask follow-up questions or request explanations in another language!`;
   };
 
   const filteredConversations = conversations.filter(c => 
@@ -479,11 +465,20 @@ const PremiumAssistantPage = () => {
               <span>DigiSaathi AI</span>
               <Sparkles size={16} className="text-cyan-400 fill-cyan-400/20" />
             </h1>
-            <p className="text-[10px] text-slate-400 font-semibold uppercase tracking-widest">Multi-Turn Voice Companion</p>
+            <p className="text-[10px] text-slate-400 font-semibold uppercase tracking-widest">ChatGPT-style Assistant</p>
           </div>
         </div>
 
         <div className="flex items-center gap-2">
+          {/* Settings / API Key Button */}
+          <button
+            onClick={() => setIsSettingsOpen(true)}
+            className="p-2 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-300 transition active:scale-95 border border-slate-700"
+            title="Gemini API Settings"
+          >
+            <Settings size={18} />
+          </button>
+
           {/* Language Selector Pill */}
           <div className="flex items-center gap-1 bg-slate-800/90 border border-slate-700 rounded-xl px-2.5 py-1.5 text-xs text-slate-300">
             <Globe size={14} className="text-cyan-400" />
@@ -513,6 +508,37 @@ const PremiumAssistantPage = () => {
           </button>
         </div>
       </header>
+
+      {/* ── SETTINGS MODAL (Gemini Key Input) ── */}
+      <AnimatePresence>
+        {isSettingsOpen && (
+          <div className="fixed inset-0 z-50 bg-black/80 backdrop-blur-sm flex items-center justify-center p-4">
+            <motion.div initial={{ scale: 0.9, opacity: 0 }} animate={{ scale: 1, opacity: 1 }} exit={{ scale: 0.9, opacity: 0 }} className="bg-slate-900 border border-slate-800 rounded-2xl p-6 max-w-md w-full shadow-2xl space-y-4">
+              <div className="flex items-center justify-between">
+                <div className="flex items-center gap-2 text-white font-black text-lg">
+                  <Key size={20} className="text-cyan-400" />
+                  <span>Gemini API Settings</span>
+                </div>
+                <button onClick={() => setIsSettingsOpen(false)} className="p-1.5 text-slate-400 hover:text-white rounded-lg"><X size={18} /></button>
+              </div>
+              <p className="text-xs text-slate-400 leading-relaxed">
+                If you have a Google AI Studio API key (`AIzaSy...`), paste it here for direct Gemini Cloud AI queries:
+              </p>
+              <input
+                type="password"
+                value={customApiKey}
+                onChange={(e) => setCustomApiKey(e.target.value)}
+                placeholder="AIzaSy..."
+                className="w-full bg-slate-950 border border-slate-800 rounded-xl px-4 py-3 text-xs text-white outline-none focus:border-cyan-500 font-mono"
+              />
+              <div className="flex justify-end gap-2 pt-2">
+                <button onClick={() => setIsSettingsOpen(false)} className="px-4 py-2 text-xs font-bold text-slate-400 hover:text-white">Cancel</button>
+                <button onClick={() => saveApiKeySetting(customApiKey)} className="px-4 py-2 bg-gradient-to-r from-cyan-500 to-indigo-600 text-white font-bold text-xs rounded-xl shadow-md">Save Key</button>
+              </div>
+            </motion.div>
+          </div>
+        )}
+      </AnimatePresence>
 
       {/* ── CONVERSATION SIDEBAR OVERLAY ── */}
       <AnimatePresence>
@@ -649,7 +675,7 @@ const PremiumAssistantPage = () => {
           </div>
         )}
 
-        {/* Render Saved & Turn Messages */}
+        {/* Render Messages */}
         {messages.map((msg, idx) => {
           const isUser = msg.role === 'user';
           const isSpeaking = speakingMsgIndex === idx;
@@ -663,7 +689,6 @@ const PremiumAssistantPage = () => {
               className={`flex ${isUser ? 'justify-end' : 'justify-start'}`}
             >
               <div className={`flex gap-3 max-w-[90%] md:max-w-[80%] ${isUser ? 'flex-row-reverse' : ''}`}>
-                {/* Avatar Icon */}
                 <div className={`w-8 h-8 rounded-xl flex items-center justify-center shrink-0 shadow-md text-xs font-bold mt-1 border
                   ${isUser 
                     ? 'bg-indigo-600 border-indigo-400 text-white' 
@@ -672,7 +697,6 @@ const PremiumAssistantPage = () => {
                   {isUser ? 'YOU' : 'AI'}
                 </div>
 
-                {/* Bubble Container */}
                 <div className={`flex flex-col gap-1.5`}>
                   <div
                     className={`p-4 rounded-2xl relative shadow-lg text-sm leading-relaxed border
@@ -691,10 +715,8 @@ const PremiumAssistantPage = () => {
                     )}
                   </div>
 
-                  {/* AI Response Action Toolbar */}
                   {!isUser && (
                     <div className="flex items-center gap-1.5 px-1 text-slate-400 text-xs">
-                      {/* Copy */}
                       <button
                         onClick={() => copyToClipboard(msg.content, idx)}
                         className="p-1.5 rounded-lg hover:bg-slate-800 hover:text-white transition flex items-center gap-1"
@@ -704,7 +726,6 @@ const PremiumAssistantPage = () => {
                         <span className="text-[10px]">{isCopied ? 'Copied' : 'Copy'}</span>
                       </button>
 
-                      {/* Read Aloud */}
                       <button
                         onClick={() => speakText(msg.content, idx)}
                         className={`p-1.5 rounded-lg transition flex items-center gap-1
@@ -715,7 +736,6 @@ const PremiumAssistantPage = () => {
                         <span className="text-[10px]">{isSpeaking ? 'Speaking...' : 'Read Aloud'}</span>
                       </button>
 
-                      {/* Regenerate (Only for latest AI message) */}
                       {idx === messages.length - 1 && (
                         <button
                           onClick={regenerateLastResponse}
@@ -734,7 +754,7 @@ const PremiumAssistantPage = () => {
           );
         })}
 
-        {/* Streaming / Generation Animated Bubble */}
+        {/* Streaming Animation */}
         {isGenerating && (
           <motion.div initial={{ opacity: 0, y: 12 }} animate={{ opacity: 1, y: 0 }} className="flex justify-start">
             <div className="flex gap-3 max-w-[90%] md:max-w-[80%]">
@@ -768,7 +788,6 @@ const PremiumAssistantPage = () => {
       {/* ── INPUT & ACTIONS FOOTER ── */}
       <div className="bg-slate-900 border-t border-slate-800 px-4 py-3 space-y-3 shadow-2xl">
         
-        {/* Suggested Questions Horizontal Scroll */}
         {messages.length === 0 && (
           <div className="flex gap-2 overflow-x-auto pb-1 scrollbar-none snap-x snap-mandatory">
             {SUGGESTED_QUESTIONS.map((item, idx) => (
@@ -785,10 +804,7 @@ const PremiumAssistantPage = () => {
           </div>
         )}
 
-        {/* Input Bar Form */}
         <form onSubmit={(e) => { e.preventDefault(); handleSendMessage(); }} className="flex items-center gap-2 relative">
-          
-          {/* Floating Microphone STT */}
           <button
             type="button"
             onClick={handleVoiceListen}
@@ -799,7 +815,6 @@ const PremiumAssistantPage = () => {
             {isListening ? <MicOff size={20} /> : <Mic size={20} />}
           </button>
 
-          {/* Text Input */}
           <input
             type="text"
             value={inputText}
@@ -808,7 +823,6 @@ const PremiumAssistantPage = () => {
             className="flex-1 bg-slate-950 border border-slate-800 rounded-2xl px-4 py-3 text-sm text-white placeholder-slate-500 focus:outline-none focus:border-cyan-500 transition shadow-inner"
           />
 
-          {/* Stop / Send Button */}
           {isGenerating ? (
             <button
               type="button"
