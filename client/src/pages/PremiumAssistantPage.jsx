@@ -419,7 +419,18 @@ const PremiumAssistantPage = () => {
       return "General Health Tip: Drinking 7 to 8 glasses of water daily, sleeping 7 hours, and taking a 20-minute daily walk keeps your heart healthy and mind sharp!";
     }
 
-    // 8. Greetings & General Conversation
+    // 8. Daily Life, Hunger, Emotions & Feelings
+    if (q.includes('hungry') || q.includes('eat') || q.includes('food') || q.includes('khana')) {
+      return "If you're feeling hungry, here are a few quick ideas:\n\n• 🥪 **Quick Snack**: Make a warm cheese or vegetable sandwich, or grab a fresh fruit.\n• 🍜 **Instant Meal**: Cook a quick 5-minute bowl of noodles or warm soup.\n• 📱 **Order Online**: Use food apps like Zomato or Swiggy to order your favorite meal!\n\nWhat are you in the mood to eat?";
+    }
+    if (q.includes('sad') || q.includes('upset') || q.includes('bored')) {
+      return "I'm sorry you're feeling that way! Take a moment to relax, listen to some soothing music, or go for a short walk. I'm right here if you want to chat or hear a funny joke! 😊";
+    }
+    if (q.includes('tired') || q.includes('sleepy')) {
+      return "You should take a well-deserved rest! Take a short 20-minute nap, drink some water, and relax your eyes from screens.";
+    }
+
+    // 9. Greetings & General Conversation
     if (q === 'bye' || q.includes('goodbye')) {
       return "Goodbye! 👋 Take care and feel free to talk to me anytime you need help!";
     }
@@ -430,8 +441,8 @@ const PremiumAssistantPage = () => {
       return "I am doing great and happy to talk to you! How can I assist you today?";
     }
 
-    // Conversational Catch-all
-    return `That is a great question regarding **"${query}"**! I am here as your DigiSaathi AI companion to answer questions across general knowledge, programming, health, finance, and digital literacy. Feel free to ask follow-up questions or request explanations in another language!`;
+    // Natural Conversational Catch-all for any user sentence
+    return `I understand you're asking about **"${query}"**. As your AI assistant, I can help you explore recipes, answer daily questions, assist with smartphones and apps, or guide you through safe online banking. What specific detail would you like to know more about?`;
   };
 
   const filteredConversations = conversations.filter(c => 
