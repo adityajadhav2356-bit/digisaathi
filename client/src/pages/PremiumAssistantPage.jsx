@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { ChevronLeft, HelpCircle, Volume2, VolumeX, Send, BookOpen, ShieldAlert, Sparkles } from 'lucide-react';
+import { ChevronLeft, HelpCircle, Volume2, VolumeX, Send, BookOpen, ShieldAlert, Sparkles, Mic, MicOff } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useNavigate } from 'react-router-dom';
 import PageTransition from '../components/PageTransition';
@@ -186,6 +186,7 @@ const PremiumAssistantPage = () => {
   const [activeSpeechIndex, setActiveSpeechIndex] = useState(null);
   const [isTyping, setIsTyping] = useState(false);
   const [inputText, setInputText] = useState('');
+  const [isListening, setIsListening] = useState(false);
 
   const messagesEndRef = useRef(null);
   const synthRef = useRef(window.speechSynthesis);
@@ -244,6 +245,7 @@ const PremiumAssistantPage = () => {
   };
 
   const fetchAIAnswer = async (query, fallbackAnswer) => {
+    // 1. Try local server backend /api/ai/chat first
     try {
       const res = await fetch('http://localhost:5000/api/ai/chat', {
         method: 'POST',
@@ -252,12 +254,37 @@ const PremiumAssistantPage = () => {
       });
       if (res.ok) {
         const data = await res.json();
-        if (data.response) return data.response;
+        if (data.response && !data.response.includes('not configured')) return data.response;
       }
     } catch (e) {
-      console.warn('Backend Gemini API not reachable, using fallback:', e);
+      console.warn('Backend server unreachable, trying direct Gemini API call:', e);
     }
-    return fallbackAnswer || "I am here to help you learn digital skills safely. Feel free to ask any question!";
+
+    // 2. Direct Gemini REST API fallback for production/Vercel
+    try {
+      const apiKey = import.meta.env.VITE_GEMINI_API_KEY || "";
+      if (apiKey) {
+        const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${apiKey}`;
+        const systemInstruction = "You are DigiSaathi, a friendly digital literacy AI assistant for senior citizens in India. Answer in simple, clear sentences (2-3 sentences max). Answer in the user's language if they ask in Hindi, Marathi, Gujarati, Tamil, Bengali, Telugu, or English.";
+        
+        const gRes = await fetch(apiUrl, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            contents: [{ parts: [{ text: `${systemInstruction}\nUser Question: ${query}` }] }]
+          })
+        });
+        if (gRes.ok) {
+          const gData = await gRes.json();
+          const ans = gData?.candidates?.[0]?.content?.parts?.[0]?.text;
+          if (ans && ans.trim()) return ans.trim();
+        }
+      }
+    } catch (e) {
+      console.warn('Direct Gemini API fallback error:', e);
+    }
+
+    return fallbackAnswer || `DigiSaathi AI: "${query}" is an important digital question. Always make sure to verify PINs and OTPs before making any transaction online!`;
   };
 
   const processQuery = async (queryText, fallbackAnswer) => {
@@ -291,6 +318,44 @@ const PremiumAssistantPage = () => {
     const q = inputText;
     setInputText('');
     processQuery(q);
+  };
+
+  const handleVoiceListen = () => {
+    const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+    if (!SpeechRecognition) {
+      alert('Speech recognition is not supported in this browser. Please type your question.');
+      return;
+    }
+
+    if (isListening) {
+      setIsListening(false);
+      return;
+    }
+
+    try {
+      const recognition = new SpeechRecognition();
+      const langMap = { 'en': 'en-IN', 'hi': 'hi-IN', 'mr': 'mr-IN', 'gu': 'gu-IN', 'ta': 'ta-IN', 'bn': 'bn-IN', 'te': 'te-IN' };
+      recognition.lang = langMap[lang] || 'en-IN';
+      recognition.continuous = false;
+      recognition.interimResults = false;
+
+      recognition.onstart = () => setIsListening(true);
+      recognition.onend = () => setIsListening(false);
+      recognition.onerror = () => setIsListening(false);
+
+      recognition.onresult = (event) => {
+        const transcript = event.results[0][0].transcript;
+        if (transcript && transcript.trim()) {
+          setInputText(transcript);
+          processQuery(transcript);
+        }
+      };
+
+      recognition.start();
+    } catch (err) {
+      console.error('Voice recognition error:', err);
+      setIsListening(false);
+    }
   };
 
   return (
@@ -383,11 +448,21 @@ const PremiumAssistantPage = () => {
       {/* Suggested Questions Grid & Custom Input Box */}
       <div className="bg-slate-900 border-t border-slate-800 px-4 py-4 space-y-3 pb-8 shadow-2xl">
         <form onSubmit={handleCustomSubmit} className="flex items-center gap-2 mb-2">
+          <button
+            type="button"
+            onClick={handleVoiceListen}
+            className={`w-11 h-11 rounded-2xl flex items-center justify-center text-white shrink-0 transition-all border
+              ${isListening ? 'bg-red-600 border-red-400 animate-pulse' : 'bg-slate-800 hover:bg-slate-700 border-slate-700'}`}
+            title="Speak your question"
+          >
+            {isListening ? <MicOff size={18} /> : <Mic size={18} className="text-cyan-400" />}
+          </button>
+          
           <input
             type="text"
             value={inputText}
             onChange={(e) => setInputText(e.target.value)}
-            placeholder="Type any question for Gemini AI..."
+            placeholder={isListening ? "Listening... Speak now!" : "Type or speak any question..."}
             className="flex-1 bg-slate-950 border border-slate-800 rounded-2xl px-4 py-3 text-sm text-white focus:outline-none focus:border-indigo-500 transition"
           />
           <button

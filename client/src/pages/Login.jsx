@@ -13,7 +13,7 @@ const languages = [
 ];
 
 const Login = () => {
-  const [phone, setPhone] = useState('');
+  const [phone, setPhone] = useState('7030027961');
   const [otp, setOtp] = useState(['', '', '', '']);
   const [step, setStep] = useState(1);
   const [selectedLang, setSelectedLang] = useState('en');

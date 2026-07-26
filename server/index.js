@@ -1,4 +1,5 @@
 require('dotenv').config();
+require('./mqtt-handler');
 const express = require('express');
 const cors = require('cors');
 

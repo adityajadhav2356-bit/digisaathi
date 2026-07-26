@@ -7,17 +7,26 @@ import PageTransition from '../components/PageTransition';
 import { useLanguage } from '../context/LanguageContext';
 
 const DetailsPage = () => {
-  const { t, setLang } = useLanguage();
+  const { t, setLang, lang } = useLanguage();
   const [step, setStep] = useState(1);
   const [profilePic, setProfilePic] = useState(() => localStorage.getItem('digisaathi_profile_pic') || null);
   const [formData, setFormData] = useState({
-    name: 'Ramesh Patil', age: '67', city: 'Pune', font: 'Normal', language: 'en', goals: [], emergencyName: 'Priya Patil', relation: 'Daughter', emergencyPhone: '9876543210', shareProgress: false
+    name: 'Ramesh Patil', age: '67', city: 'Pune', font: localStorage.getItem('digisaathi_font_size') || 'Normal', language: lang, goals: [], emergencyName: 'Priya Patil', relation: 'Daughter', emergencyPhone: '9876543210', shareProgress: false
   });
   const navigate = useNavigate();
 
   const handleLangChange = (l) => {
     setFormData({...formData, language: l});
     setLang(l);
+  };
+
+  const handleFontSizeChange = (key) => {
+    setFormData({...formData, font: key});
+    localStorage.setItem('digisaathi_font_size', key);
+    let size = '16px';
+    if (key === 'Large') size = '18px';
+    if (key === 'Extra Large') size = '22px';
+    document.documentElement.style.fontSize = size;
   };
 
   const handleNext = () => setStep(prev => Math.min(prev + 1, 3));
@@ -175,11 +184,11 @@ const DetailsPage = () => {
                     <h3 className="flex items-center gap-2 text-wa-subtext text-xs font-bold uppercase tracking-widest mb-3 px-1"><Type size={16} /> {t('fontSize') || 'Text Size'}</h3>
                     <div className="flex gap-2">
                       {[
-                        { label: 'Normal', uiSize: 'text-base' }, 
-                        { label: 'Large', uiSize: 'text-lg' }, 
-                        { label: 'Extra Large', uiSize: 'text-xl' }
+                        { label: 'Normal', display: t('fontNormal') || 'Normal', uiSize: 'text-base' }, 
+                        { label: 'Large', display: t('fontLarge') || 'Large', uiSize: 'text-lg' }, 
+                        { label: 'Extra Large', display: t('fontExtraLarge') || 'Extra Large', uiSize: 'text-xl' }
                       ].map((f) => (
-                        <button key={f.label} onClick={() => setFormData({...formData, font: f.label})} 
+                        <button key={f.label} onClick={() => handleFontSizeChange(f.label)} 
                           className={`flex-1 py-3 px-2 rounded-xl text-center font-bold border-2 transition-all ${f.uiSize}
                           ${formData.font === f.label ? 'border-wa-teal bg-wa-light text-wa-dark' : 'border-wa-border text-wa-subtext hover:border-wa-teal'}`}>
                           A
@@ -213,10 +222,10 @@ const DetailsPage = () => {
                     <h3 className="flex items-center gap-2 text-wa-subtext text-xs font-bold uppercase tracking-widest mb-3 px-1"><CheckCircle size={16} /> {t('learnGoals') || 'What do you want to learn?'}</h3>
                     <div className="grid grid-cols-2 gap-3">
                       {[
-                        { id: 'upi', label: 'UPI Payments', icon: Wallet, color: 'text-blue-500', bg: 'bg-blue-50' },
-                        { id: 'whatsapp', label: 'WhatsApp', icon: MessageCircle, color: 'text-wa-green', bg: 'bg-wa-light' },
-                        { id: 'govt', label: 'Govt Services', icon: FileText, color: 'text-purple-500', bg: 'bg-purple-50' },
-                        { id: 'safety', label: 'Online Safety', icon: ShieldCheck, color: 'text-red-500', bg: 'bg-red-50' }
+                        { id: 'upi', label: t('goalUpi') || 'UPI Payments', icon: Wallet, color: 'text-blue-500', bg: 'bg-blue-50' },
+                        { id: 'whatsapp', label: t('goalWhatsapp') || 'WhatsApp', icon: MessageCircle, color: 'text-wa-green', bg: 'bg-wa-light' },
+                        { id: 'govt', label: t('goalGovt') || 'Govt Services', icon: FileText, color: 'text-purple-500', bg: 'bg-purple-50' },
+                        { id: 'safety', label: t('goalSafety') || 'Online Safety', icon: ShieldCheck, color: 'text-red-500', bg: 'bg-red-50' }
                       ].map(g => {
                         const isSelected = formData.goals.includes(g.id);
                         return (

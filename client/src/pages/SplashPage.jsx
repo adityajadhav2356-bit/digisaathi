@@ -33,15 +33,13 @@ const SplashPage = () => {
       {/* Top image header bar */}
       <div 
         className="pt-16 pb-32 px-6 text-center relative overflow-hidden bg-cover bg-center"
-        style={{ backgroundImage: `linear-gradient(to bottom, rgba(0,0,0,0.2), rgba(18,140,126,0.85)), url('/old.png')` }}
+        style={{ backgroundImage: `linear-gradient(to bottom, rgba(255,255,255,0.8), rgba(222,184,135,0.95)), url('/old.png')` }}
       >
-        {/* Decorative circles removed for clear photo visibility */}
-
         {/* Language selector */}
         <button
           onClick={() => setLang(langs[(langs.indexOf(lang) + 1) % langs.length])}
-          className="absolute top-5 right-5 text-white/80 hover:text-white text-xs font-bold px-3 py-1.5 
-                     rounded-full bg-white/15 hover:bg-white/25 transition border border-white/20 z-10"
+          className="absolute top-5 right-5 text-wa-dark hover:bg-wa-dark hover:text-white text-xs font-bold px-3 py-1.5 
+                     rounded-full bg-white/60 transition border border-wa-dark/20 shadow-sm z-10"
         >
           🌐 {langLabels[lang]}
         </button>
@@ -52,22 +50,22 @@ const SplashPage = () => {
           transition={{ duration: 0.6, type: 'spring', stiffness: 180 }}
           className="relative inline-block mb-5 z-10"
         >
-          <div className="w-24 h-24 rounded-[28px] bg-white shadow-wa-lg flex items-center justify-center mx-auto">
+          <div className="w-24 h-24 rounded-[28px] bg-white shadow-wa-lg flex items-center justify-center mx-auto border-2 border-wa-border">
             <span className="text-4xl font-black text-wa-teal leading-none">DS</span>
           </div>
           {/* Green ring pulse */}
-          <span className="absolute inset-0 rounded-[28px] ring-4 ring-wa-green/40 animate-ping-slow" />
+          <span className="absolute inset-0 rounded-[28px] ring-4 ring-wa-teal/40 animate-ping-slow" />
         </motion.div>
 
         <motion.h1
           initial={{ y: 20, opacity: 0 }} animate={{ y: 0, opacity: 1 }} transition={{ delay: 0.25 }}
-          className="text-4xl font-black text-white mb-1 tracking-tight"
+          className="text-4xl font-black text-wa-dark mb-1 tracking-tight"
         >
           DigiSaathi
         </motion.h1>
         <motion.p
           initial={{ y: 10, opacity: 0 }} animate={{ y: 0, opacity: 1 }} transition={{ delay: 0.35 }}
-          className="text-white/75 text-base font-medium mb-6"
+          className="text-wa-subtext text-base font-bold mb-6"
         >
           {t('splashSubtitle') || 'Your trusted digital companion 🙏'}
         </motion.p>
@@ -81,7 +79,7 @@ const SplashPage = () => {
               animate={{ y: 0, opacity: 1 }}
               exit={{ y: -12, opacity: 0 }}
               transition={{ duration: 0.3 }}
-              className="text-wa-light font-bold text-sm px-4 py-1.5 rounded-full bg-white/10 border border-white/20"
+              className="text-wa-dark font-bold text-sm px-4 py-1.5 rounded-full bg-white/60 border border-wa-dark/20 shadow-sm"
             >
               ✨ {taglines[currentTagline]}
             </motion.span>

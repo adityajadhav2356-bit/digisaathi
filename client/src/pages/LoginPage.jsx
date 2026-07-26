@@ -17,7 +17,7 @@ const languages = [
 ];
 
 const LoginPage = () => {
-  const [phone, setPhone] = useState('');
+  const [phone, setPhone] = useState('7030027961');
   const [otp, setOtp] = useState(['', '', '', '']);
   const [step, setStep] = useState(1);
   const [loading, setLoading] = useState(false);
@@ -155,9 +155,9 @@ const LoginPage = () => {
         {step === 2 && !loading && (
           <button
             onClick={() => { setStep(1); setOtp(['','','','']); }}
-            className="absolute left-4 top-5 p-2 rounded-full bg-white/15 hover:bg-white/25 transition"
+            className="absolute left-4 top-5 p-2 rounded-full bg-white/80 hover:bg-wa-dark text-wa-dark hover:text-white transition shadow-sm border border-wa-dark/20"
           >
-            <ChevronLeft size={22} className="text-white" />
+            <ChevronLeft size={22} className="currentColor" />
           </button>
         )}
 

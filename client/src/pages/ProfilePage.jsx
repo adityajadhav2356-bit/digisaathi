@@ -10,8 +10,17 @@ import { useLanguage } from '../context/LanguageContext';
 const ProfilePage = () => {
   const navigate = useNavigate();
   const { lang, setLang, t } = useLanguage();
-  const [fontSize, setFontSize] = useState('Normal');
+  const [fontSize, setFontSize] = useState(() => localStorage.getItem('digisaathi_font_size') || 'Normal');
   const [profilePic, setProfilePic] = useState(() => localStorage.getItem('digisaathi_profile_pic') || null);
+
+  const handleFontSizeChange = (key) => {
+    setFontSize(key);
+    localStorage.setItem('digisaathi_font_size', key);
+    let size = '16px';
+    if (key === 'Large') size = '18px';
+    if (key === 'Extra Large') size = '22px';
+    document.documentElement.style.fontSize = size;
+  };
 
   const localizedUser     = dummyUser.translations?.[lang]      || dummyUser;
   const localizedVolunteer = dummyVolunteer.translations?.[lang] || dummyVolunteer;
@@ -74,13 +83,13 @@ const ProfilePage = () => {
       {/* Header */}
       <header className="wa-header">
         <div className="flex items-center gap-3">
-          <div className="w-9 h-9 rounded-full bg-white/20 flex items-center justify-center">
-            <User size={18} className="text-white" />
+          <div className="w-9 h-9 rounded-full bg-wa-dark/10 flex items-center justify-center">
+            <User size={18} className="text-wa-teal" />
           </div>
           <h1 className="wa-header-title">{t('myProfile') || 'My Profile'}</h1>
         </div>
-        <button className="p-2 rounded-full bg-white/15 hover:bg-white/25 transition">
-          <Edit2 size={18} className="text-white" />
+        <button className="p-2 rounded-full bg-wa-dark/10 hover:bg-wa-dark/20 transition">
+          <Edit2 size={18} className="text-wa-teal" />
         </button>
       </header>
 
@@ -158,7 +167,7 @@ const ProfilePage = () => {
             {fontOptions.map(f => (
               <button
                 key={f.key}
-                onClick={() => setFontSize(f.key)}
+                onClick={() => handleFontSizeChange(f.key)}
                 className={`flex-1 py-3 rounded-xl font-bold ${f.size} border-2 transition-all
                   ${fontSize === f.key
                     ? 'border-wa-teal bg-wa-light text-wa-dark'
@@ -168,7 +177,7 @@ const ProfilePage = () => {
               </button>
             ))}
           </div>
-          <p className="text-wa-subtext text-xs text-right mt-1">{fontSize}</p>
+          <p className="text-wa-subtext text-xs text-right mt-1">{t(`font${fontSize.replace(' ', '')}`) || fontSize}</p>
         </motion.div>
 
         {/* Language setting */}

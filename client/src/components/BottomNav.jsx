@@ -1,7 +1,7 @@
 import React from 'react';
 import { useLocation, Link } from 'react-router-dom';
 import { motion } from 'framer-motion';
-import { Home, BookOpen, ShieldAlert, User, Mic } from 'lucide-react';
+import { Home, BookOpen, ShieldAlert, User, Mic, Sparkles } from 'lucide-react';
 import { useLanguage } from '../context/LanguageContext';
 
 const BottomNav = () => {
@@ -15,6 +15,7 @@ const BottomNav = () => {
     { path: '/module/upi',     icon: BookOpen,     label: t('navLearn')  || 'Learn' },
     { path: '/alerts',         icon: ShieldAlert,  label: t('navAlerts') || 'Alerts' },
     { path: '/voice-assistant',icon: Mic,          label: 'Assistant' },
+    { path: '/services',       icon: Sparkles,     label: t('homeCareTitle')?.split(' ')[0] || 'Home Care' },
     { path: '/profile',        icon: User,         label: t('navProfile')|| 'Profile' },
   ];
 

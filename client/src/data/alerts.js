@@ -1,7 +1,207 @@
 export const fraudAlerts = [
-  { id: 1, type: "UPI Scam", icon: "💸", severity: "high", title: "Fake UPI collect request", description: "Scammers send UPI collect requests claiming to send you prize money. Entering your PIN on a collect request sends YOUR money to them.", whatToDo: "Never enter your UPI PIN on a collect request. Decline and block the number immediately.", translations: { hi: { title: "नकली UPI अनुरोध", description: "घोटालेबाज आपको पुरस्कार राशि भेजने का दावा करते हुए UPI अनुरोध भेजते हैं। अनुरोध पर अपना पिन दर्ज करने से आपका पैसा उनके पास चला जाता है।", whatToDo: "कभी भी अनुरोध पर अपना UPI पिन दर्ज न करें। इसे तुरंत अस्वीकार करें और नंबर को ब्लॉक करें।" } } },
-  { id: 2, type: "KYC Fraud", icon: "📞", severity: "high", title: "Fake bank KYC call", description: "Someone calls claiming your bank KYC is expired and your account will be blocked. They ask for Aadhaar number and OTP to 'verify' your account.", whatToDo: "Hang up immediately. Your bank will NEVER ask for OTP over a phone call. Call your bank's official number printed on your card.", translations: { hi: { title: "नकली बैंक KYC कॉल", description: "कोई कॉल करके दावा करता है कि आपका बैंक KYC समाप्त हो गया है और आपका खाता ब्लॉक कर दिया जाएगा। वे 'सत्यापित' करने के लिए आधार नंबर और OTP मांगते हैं।", whatToDo: "तुरंत कॉल काट दें। आपका बैंक फोन कॉल पर कभी भी OTP नहीं मांगेगा। अपने कार्ड पर छपे बैंक के आधिकारिक नंबर पर कॉल करें।" } } },
-  { id: 3, type: "Lottery Scam", icon: "🎰", severity: "medium", title: "You won Rs 50 lakh!", description: "WhatsApp or SMS messages claiming you have won a lottery or KBC prize. They ask for a processing fee of Rs 500 to release your winnings.", whatToDo: "Delete the message immediately. You cannot win a lottery you never entered. Do not pay any fee.", translations: { hi: { title: "आपने 50 लाख रुपये जीते हैं!", description: "व्हाट्सएप या एसएमएस संदेश यह दावा करते हैं कि आपने लॉटरी या केबीसी पुरस्कार जीता है। वे आपकी पुरस्कार राशि जारी करने के लिए 500 रुपये प्रसंस्करण शुल्क मांगते हैं।", whatToDo: "संदेश को तुरंत हटा दें। आप ऐसी लॉटरी नहीं जीत सकते जिसमें आपने भाग नहीं लिया। कोई शुल्क न दें।" } } },
-  { id: 4, type: "Fake App", icon: "📱", severity: "medium", title: "Fake government app", description: "Links shared over WhatsApp to install 'government apps' for free electricity, ration benefits, or pension updates. These apps steal your banking details.", whatToDo: "Download apps ONLY from Google Play Store. Never install from WhatsApp links.", translations: { hi: { title: "नकली सरकारी ऐप", description: "मुफ्त बिजली, राशन लाभ, या पेंशन अपडेट के लिए 'सरकारी ऐप' स्थापित करने के लिए व्हाट्सएप पर लिंक साझा किए गए। ये ऐप आपके बैंकिंग विवरण चुरा लेते हैं।", whatToDo: "केवल Google Play Store से ऐप डाउनलोड करें। व्हाट्सएप लिंक से कभी स्थापित न करें।" } } },
-  { id: 5, type: "OTP Theft", icon: "🔐", severity: "high", title: "OTP theft over call", description: "Caller says 'I am sending you Rs 500, please share the OTP you just received to confirm'. The OTP they sent is actually to reset YOUR account password.", whatToDo: "Never share OTP with anyone over call or WhatsApp. OTPs are private — like your ATM PIN.", translations: { hi: { title: "कॉल पर OTP की चोरी", description: "कॉलर कहता है 'मैं आपको 500 रुपये भेज रहा हूं, कृपया पुष्टि करने के लिए आपको जो OTP प्राप्त हुआ है उसे साझा करें'। जो OTP उन्होंने भेजा वह वास्तव में आपके खाते का पासवर्ड रीसेट करने के लिए है।", whatToDo: "कॉल या व्हाट्सएप पर किसी के साथ OTP कभी साझा न करें। OTP निजी हैं - आपके एटीएम पिन की तरह।" } } }
+  {
+    id: 1,
+    type: "UPI Scam",
+    icon: "💸",
+    severity: "high",
+    title: "Fake UPI collect request",
+    description: "Scammers send UPI collect requests claiming to send you prize money. Entering your PIN on a collect request sends YOUR money to them.",
+    whatToDo: "Never enter your UPI PIN on a collect request. Decline and block the number immediately.",
+    translations: {
+      hi: {
+        title: "नकली UPI अनुरोध",
+        description: "घोटालेबाज आपको पुरस्कार राशि भेजने का दावा करते हुए UPI अनुरोध भेजते हैं। अनुरोध पर अपना पिन दर्ज करने से आपका पैसा उनके पास चला जाता है।",
+        whatToDo: "कभी भी अनुरोध पर अपना UPI पिन दर्ज न करें। इसे तुरंत अस्वीकार करें और नंबर को ब्लॉक करें।"
+      },
+      mr: {
+        title: "खोटा UPI पेमेंट संदेश",
+        description: "फसवणूक करणारे तुम्हाला बक्षीस देण्याच्या बहाण्याने पैशांची मागणी करणारा UPI मेसेज पाठवतात. या मेसेजवर पिन टाकल्यास तुमचे पैसे त्यांना मिळतात.",
+        whatToDo: "पैसे मिळवण्यासाठी कधीही पिन टाकू नका. आलेली विनंती त्वरित नाकारा आणि तो नंबर ब्लॉक करा."
+      },
+      gu: {
+        title: "નકલી UPI કલેક્ટ વિનંતી",
+        description: "કૌભાંડીઓ તમને ઇનામ મોકલવાનું કહીને UPI કલેક્ટ રિકવેસ્ટ મોકલે છે. તેના પર PIN દાખલ કરવાથી તમારા પૈસા તેમના ખાતામાં જતા રહે છે.",
+        whatToDo: "પૈસા મેળવવા માટે ક્યારેય UPI PIN દાખલ ન કરો. રિકવેસ્ટને નકારી કાઢો અને નંબર બ્લોક કરો."
+      },
+      ta: {
+        title: "போலி UPI பணக் கோரிக்கை",
+        description: "மோசடி செய்பவர்கள் பரிசுப் பணம் தருவதாகக் கூறி UPI பணக் கோரிக்கைகளை அனுப்புகின்றனர். இதில் PIN-ஐ உள்ளிட்டால் உங்கள் பணம் அவர்களுக்குச் சென்றுவிடும்.",
+        whatToDo: "பணக் கோரிக்கையில் ஒருபோதும் UPI PIN-ஐ உள்ளிட வேண்டாம். அதை உடனடியாக நிராகரித்து எண்ணை முடக்கவும்."
+      },
+      bn: {
+        title: "ভুয়ো UPI পেমেন্ট অনুরোধ",
+        description: "প্রতারকরা আপনাকে পুরস্কারের টাকা পাঠানোর বাহানা করে UPI কালেক্ট অনুরোধ পাঠায়। এতে আপনার PIN দিলে টাকা তাদের কাছে চলে যাবে।",
+        whatToDo: "টাকা পাওয়ার জন্য কখনো UPI PIN দেবেন না। অবিলম্বে অনুরোধটি বাতিল করুন এবং নম্বরটি ব্লক করুন।"
+      },
+      te: {
+        title: "నకిలీ UPI డబ్బు అభ్యర్థన",
+        description: "మోసగాళ్లు మీకు బహుమతి డబ్బు పంపుతామని చెప్తూ UPI కలెక్ట్ రిక్వెస్ట్ పంపుతారు. దీనిపై PIN టైప్ చేస్తే మీ డబ్బు వారి ఖాతాకు పోతుంది.",
+        whatToDo: "డబ్బు పొందడానికి ఎప్పుడూ PIN టైప్ చేయవద్దు. రిక్వెస్ట్‌ను తిరస్కరించి, ఆ నంబర్‌ను బ్లాక్ చేయండి."
+      }
+    }
+  },
+  {
+    id: 2,
+    type: "KYC Fraud",
+    icon: "📞",
+    severity: "high",
+    title: "Fake bank KYC call",
+    description: "Someone calls claiming your bank KYC is expired and your account will be blocked. They ask for Aadhaar number and OTP to 'verify' your account.",
+    whatToDo: "Hang up immediately. Your bank will NEVER ask for OTP over a phone call. Call your bank's official number printed on your card.",
+    translations: {
+      hi: {
+        title: "नकली बैंक KYC कॉल",
+        description: "कोई कॉल करके दावा करता है कि आपका बैंक KYC समाप्त हो गया है और आपका खाता ब्लॉक कर दिया जाएगा। वे 'सत्यापित' करने के लिए आधार नंबर और OTP मांगते हैं।",
+        whatToDo: "तुरंत कॉल काट दें। आपका बैंक फोन कॉल पर कभी भी OTP नहीं मांगेगा। अपने कार्ड पर छपे बैंक के आधिकारिक नंबर पर कॉल करें।"
+      },
+      mr: {
+        title: "खोटा बँक KYC कॉल",
+        description: "बँक खाते बंद होण्याची भीती दाखवून फसवणूक करणारे कॉल करतात आणि 'सत्यापन' करण्यासाठी तुमचा आधार क्रमांक आणि OTP मागतात.",
+        whatToDo: "फोन ताबडतोब कट करा. बँक अधिकारी फोनवर कधीही OTP मागत नाहीत. तुमच्या डेबिट कार्डवरील अधिकृत नंबरवर कॉल करा."
+      },
+      gu: {
+        title: "નકલી બેંક KYC કોલ",
+        description: "કોઈ વ્યક્તિ ફોન કરીને દાવો કરે છે કે તમારું બેંક KYC પૂર્ણ થઈ ગયું નથી અને ખાતું બ્લોક થશે. તેઓ વિગતો ચકાસવા માટે OTP અને આધાર માંગે છે.",
+        whatToDo: "તરત જ કોલ કાપી નાખો. બેંક ક્યારેય ફોન પર OTP માંગતી નથી. તમારા કાર્ડ પર લખેલા અધિકૃત નંબર પર ફોન કરો."
+      },
+      ta: {
+        title: "போலி வங்கி KYC அழைப்பு",
+        description: "வங்கி கணக்கு முடக்கப்படும் என்று கூறி போலி அழைப்புகள் வரும். கணக்கைச் சரிபார்க்க ஆதார் எண் மற்றும் OTP ஐக் கேட்பார்கள்.",
+        whatToDo: "உடனே அழைப்பைத் துண்டிக்கவும். வங்கி ஒருபோதும் தொலைபேசியில் OTP கேட்காது. உங்கள் கார்டில் உள்ள வங்கியின் அதிகாரப்பூர்வ எண்ணை அழைக்கவும்."
+      },
+      bn: {
+        title: "ভুয়ো ব্যাংক KYC কল",
+        description: "কেউ কল করে দাবি করে যে আপনার ব্যাংক KYC শেষ হয়ে গেছে এবং অ্যাকাউন্ট বন্ধ হবে। তারা যাচাই করতে আধার এবং OTP চায়।",
+        whatToDo: "তাত্ক্ষণিকভাবে কল কেটে দিন। ব্যাংক ফোনে কখনো OTP চায় না। কার্ডে থাকা ব্যাংকের অফিশিয়াল নম্বরে কল করুন।"
+      },
+      te: {
+        title: "నకిలీ బ్యాంక్ KYC కాల్",
+        description: "మీ బ్యాంక్ KYC గడువు ముగిసిందని, ఖాతా బ్లాక్ అవుతుందని నకిలీ కాల్స్ వస్తాయి. ధృవీకరణ కోసం ఆధార్ మరియు OTP అడుగుతారు.",
+        whatToDo: "వెంటనే కాల్ కట్ చేయండి. బ్యాంక్ ఎప్పుడూ ఫోన్ కాల్‌లో OTP అడగదు. మీ కార్డుపై ఉన్న బ్యాంక్ అధికారిక నంబర్‌కు కాల్ చేయండి."
+      }
+    }
+  },
+  {
+    id: 3,
+    type: "Lottery Scam",
+    icon: "🎰",
+    severity: "medium",
+    title: "You won Rs 50 lakh!",
+    description: "WhatsApp or SMS messages claiming you have won a lottery or KBC prize. They ask for a processing fee of Rs 500 to release your winnings.",
+    whatToDo: "Delete the message immediately. You cannot win a lottery you never entered. Do not pay any fee.",
+    translations: {
+      hi: {
+        title: "आपने 50 लाख रुपये जीते हैं!",
+        description: "व्हाट्सएप या एसएमएस संदेश यह दावा करते हैं कि आपने लॉटरी या केबीसी पुरस्कार जीता है। वे आपकी पुरस्कार राशि जारी करने के लिए 500 रुपये प्रसंस्करण शुल्क मांगते हैं।",
+        whatToDo: "संदेश को तुरंत हटा दें। आप ऐसी लॉटरी नहीं जीत सकते जिसमें आपने भाग नहीं लिया। कोई शुल्क न दें।"
+      },
+      mr: {
+        title: "तुम्ही ५० लाख जिंकले आहात!",
+        description: "तुम्ही लॉटरी किंवा केबीसीचे बक्षीस जिंकले आहे असा दावा करणारे खोटे मेसेज येतात आणि 'प्रोसेसिंग फी' म्हणून आधी पैसे मागितले जातात.",
+        whatToDo: "मेसेज लगेच डिलीट करा. ज्या लॉटरीत तुम्ही भाग घेतला नव्हता, ती तुम्ही जिंकू शकत नाही. आधी पैसे कधीही देऊ नका."
+      },
+      gu: {
+        title: "તમે 50 લાખ જીત્યા છો!",
+        description: "તમે લોટરી કે KBC ઇનામ જીત્યા છો તેવા મેસેજ મોકલીને ઇનામ રિલીઝ કરવા માટે રૂ. 500 પ્રોસેસિંગ ફી માંગવામાં આવે છે.",
+        whatToDo: "મેસેજ તરત જ ડિલીટ કરો. જે લોટરીમાં તમે ભાગ લીધો નથી તે તમે જીતી ન શકો. કોઈપણ પ્રકારની ફી ચૂકવશો નહીં."
+      },
+      ta: {
+        title: "நீங்கள் ரூ.50 லட்சம் வென்றுள்ளீர்கள்!",
+        description: "லாட்டரி அல்லது KBC பரிசு வென்றதாக வரும் போலி செய்திகள். பரிசைப் பெற ரூ.500 செயலாக்கக் கட்டணம் செலுத்துமாறு கேட்பார்கள்.",
+        whatToDo: "செய்தியை உடனே அழிக்கவும். நீங்கள் பங்கேற்காத லாட்டரியில் நீங்கள் வெற்றி பெற முடியாது. எந்தக் கட்டணமும் செலுத்த வேண்டாம்."
+      },
+      bn: {
+        title: "আপনি ৫০ লক্ষ টাকা জিতেছেন!",
+        description: "হোয়াটসঅ্যাপ বা মেসেজে দাবি করা হয় আপনি লটারি বা কেবিসি পুরস্কার জিতেছেন এবং পুরস্কারের জন্য ৫০০ টাকা ফি দিতে হবে।",
+        whatToDo: "বার্তাটি অবিলম্বে মুছে ফেলুন। যে লটারিতে আপনি অংশ নেননি তা জিততে পারেন না। কোনো ফি দেবেন না।"
+      },
+      te: {
+        title: "మీరు రూ. 50 లక్షలు గెలుచుకున్నారు!",
+        description: "మీరు లాటరీ లేదా KBC బహుమతి గెలుచుకున్నారని వచ్చే నకిలీ సందేశాలు. బహుమతి కోసం రూ. 500 ఫీజు చెల్లించమని అడుగుతారు.",
+        whatToDo: "సందేశాన్ని వెంటనే తొలగించండి. మీరు పాల్గొనని లాటరీని మీరు గెలవలేరు. ఎలాంటి రుసుము చెల్లించకండి."
+      }
+    }
+  },
+  {
+    id: 4,
+    type: "Fake App",
+    icon: "📱",
+    severity: "medium",
+    title: "Fake government app",
+    description: "Links shared over WhatsApp to install 'government apps' for free electricity, ration benefits, or pension updates. These apps steal your banking details.",
+    whatToDo: "Download apps ONLY from Google Play Store. Never install from WhatsApp links.",
+    translations: {
+      hi: {
+        title: "नकली सरकारी ऐप",
+        description: "मुफ्त बिजली, राशन लाभ, या पेंशन अपडेट के लिए 'सरकारी ऐप' स्थापित करने के लिए व्हाट्सएप पर लिंक साझा किए गए। ये ऐप आपके बैंकिंग विवरण चुरा लेते हैं।",
+        whatToDo: "केवल Google Play Store से ऐप डाउनलोड करें। व्हाट्सएप लिंक से कभी स्थापित न करें।"
+      },
+      mr: {
+        title: "खोटे सरकारी ॲप्स",
+        description: "मोफत वीज, रेशन किंवा पेन्शनसाठी ॲप डाऊनलोड करण्याच्या खोट्या लिंक्स व्हॉट्सॲपवर पाठवल्या जातात. हे ॲप्स बँकेची माहिती चोरतात.",
+        whatToDo: "नेहमी फक्त गुगल प्ले स्टोअरवरूनच अधिकृत ॲप्स डाउनलोड करा. व्हॉट्सॲपवरील अनोळखी लिंकवरून काहीही डाउनलोड करू नका."
+      },
+      gu: {
+        title: "નકલી સરકારી એપ્લિકેશન",
+        description: "મફત વીજળી, રાશન કે પેન્શન માટે નકલી સરકારી એપ ડાઉનલોડ કરવાની લિંક્સ વોટ્સએપ પર શેર કરી બેંક વિગતો ચોરવામાં આવે છે.",
+        whatToDo: "માત્ર Google Play Store પરથી જ એપ્સ ડાઉનલોડ કરો. વોટ્સએપ લિંક્સથી ક્યારેય ઇન્સ્ટોલ ન કરો."
+      },
+      ta: {
+        title: "போலி அரசு செயலி",
+        description: "இலவச மின்சாரம் அல்லது ஓய்வூதியத்திற்காக 'அரசு செயலிகள்' என்ற போலி லிங்குகள் வாட்ஸ்அப்பில் பகிரப்பட்டு, வங்கி விவரங்கள் திருடப்படும்.",
+        whatToDo: "Google Play Store இலிருந்து மட்டுமே செயலிகளைப் பதிவிறக்கவும். வாட்ஸ்அப் லிங்க் மூலம் இன்ஸ்டால் செய்ய வேண்டாம்."
+      },
+      bn: {
+        title: "ভুয়ো সরকারি অ্যাপ",
+        description: "বিনামূল্যে বিদ্যুৎ বা রেশন দেওয়ার নাম করে হোয়াটসঅ্যাপে ভুয়ো অ্যাপ ইনস্টল করার লিংক শেয়ার করে ব্যাংকের তথ্য চুরি করা হয়।",
+        whatToDo: "কেবল Google Play Store থেকে অ্যাপ ডাউনলোড করুন। হোয়াটসঅ্যাপ লিংক থেকে কখনোই ইনস্টল করবেন না।"
+      },
+      te: {
+        title: "నకిలీ ప్రభుత్వ యాప్",
+        description: "ఉచిత విద్యుత్ లేదా పింఛన్ కోసం ప్రభుత్వ యాప్‌లు ఇన్‌స్టాల్ చేసుకోమని నకిలీ లింకులు పంపి బ్యాంక్ వివరాలు దొంగిలిస్తారు.",
+        whatToDo: "యాప్‌లను కేవలం Google Play Store నుండి మాత్రమే డౌన్‌లోడ్ చేసుకోండి. వాట్సాప్ లింకుల నుండి ఇన్‌స్టాల్ చేయకండి."
+      }
+    }
+  },
+  {
+    id: 5,
+    type: "OTP Theft",
+    icon: "🔐",
+    severity: "high",
+    title: "OTP theft over call",
+    description: "Caller says 'I am sending you Rs 500, please share the OTP you just received to confirm'. The OTP they sent is actually to reset YOUR account password.",
+    whatToDo: "Never share OTP with anyone over call or WhatsApp. OTPs are private — like your ATM PIN.",
+    translations: {
+      hi: {
+        title: "कॉल पर OTP की चोरी",
+        description: "कॉलर कहता है 'मैं आपको 500 रुपये भेज रहा हूं, कृपया पुष्टि करने के लिए आपको जो OTP प्राप्त हुआ है उसे साझा करें'। जो OTP उन्होंने भेजा वह वास्तव में आपके खाते का पासवर्ड रीसेट करने के लिए है।",
+        whatToDo: "कॉल या व्हाट्सएप पर किसी के साथ OTP कभी साझा न करें। OTP निजी हैं - आपके एटीएम पिन की तरह।"
+      },
+      mr: {
+        title: "कॉलवर OTP चोरी करणे",
+        description: "फोन करणारा म्हणतो 'मी तुम्हाला ५०० रुपये पाठवत आहे, पुष्टीकरणासाठी आलेला OTP सांगा'. हा OTP खरं तर तुमचे बँक पासवर्ड बदलण्यासाठी पाठवलेला असतो.",
+        whatToDo: "फोन किंवा व्हॉट्सॲपवर कोणाशीही OTP शेअर करू नका. OTP अत्यंत खाजगी असतो - तुमच्या एटीएम पिनसारखा."
+      },
+      gu: {
+        title: "કોલ પર OTP ની ચોરી",
+        description: "કોલ કરનાર કહે છે 'હું તમને રૂ. ૫૦૦ મોકલી રહ્યો છું, કન્ફર્મ કરવા OTP આપો'. તે ઓટીપી વાસ્તવમાં તમારા ખાતાનો પાસવર્ડ બદલવા માટે હોય છે.",
+        whatToDo: "કોલ અથવા વોટ્સએપ પર ક્યારેય કોઈની સાથે OTP શેર ન કરો. OTP તમારા એટીએમ પિન જેવો જ ખાનगी છે."
+      },
+      ta: {
+        title: "அழைப்பு மூலம் OTP திருட்டு",
+        description: "அழைப்பவர் 'நான் உங்களுக்கு ரூ.500 அனுப்புகிறேன், சரிபார்க்க OTP ஐக் கூறவும்' என்பார். ஆனால் அது உங்கள் கடவுச்சொல்லை மாற்றுவதற்கான OTP ஆகும்.",
+        whatToDo: "தொலைபேசி அல்லது வாட்ஸ்அப்பில் ஒருபோதும் OTP ஐப் பகிர வேண்டாம். OTP என்பது உங்கள் ATM PIN போன்ற மிக ரகசியமானது."
+      },
+      bn: {
+        title: "ফোনে OTP চুরি",
+        description: "প্রতারক বলে 'আমি আপনাকে ৫০০ টাকা পাঠাচ্ছি, নিশ্চিত করতে ওটিপি বলুন'। ওটিপি-টি আসলে আপনার অ্যাকাউন্টের পাসওয়ার্ড বদলানোর জন্য পাঠানো হয়।",
+        whatToDo: "ফোন বা হোয়াটসঅ্যাপে কখনোই ওটিপি শেয়ার করবেন না। এটি আপনার এটিএম পিনের মতোই গোপন বিষয়।"
+      },
+      te: {
+        title: "కాల్ ద్వారా OTP దొంగతనం",
+        description: "ఫోన్ చేసిన వ్యక్తి 'నేను మీకు రూ. 500 పంపుతున్నాను, కన్ఫర్మ్ చేయడానికి OTP చెప్పండి' అంటాడు. ఆ OTP మీ బ్యాంక్ పాస్‌వర్డ్ మార్చడానికి పంపబడినది.",
+        whatToDo: "ఫోన్ లేదా వాట్సాప్‌లో ఎవరితోనూ OTP పంచుకోకండి. OTP అనేది మీ ATM PIN లాంటి అత్యంత రహస్య సమాచారం."
+      }
+    }
+  }
 ]
