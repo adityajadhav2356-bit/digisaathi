@@ -1,24 +1,43 @@
-const OpenAI = require('openai');
+const { GoogleGenerativeAI } = require('@google/generative-ai');
 
-const openai = new OpenAI({
-  apiKey: process.env.OPENAI_API_KEY,
-});
+let genAI = null;
+
+function getGeminiClient() {
+  if (!genAI) {
+    if (!process.env.GEMINI_API_KEY) {
+      return null;
+    }
+    genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY);
+  }
+  return genAI;
+}
 
 async function getAIResponse(message) {
-  try {
-    const completion = await openai.chat.completions.create({
-      model: 'gpt-3.5-turbo',
-      messages: [
-        { role: 'system', content: 'You are a helpful AI assistant for digital literacy questions, especially for senior citizens. Keep responses simple, clear, and encouraging.' },
-        { role: 'user', content: message },
-      ],
-      max_tokens: 150,
-    });
-    return completion.choices[0].message.content.trim();
-  } catch (error) {
-    console.error('OpenAI error:', error);
-    return 'Sorry, I am unable to respond right now. Please try again later.';
+  const client = getGeminiClient();
+  if (!client) {
+    return 'AI service is not configured. Please set the GEMINI_API_KEY environment variable.';
   }
+
+  const modelsToTry = ['gemini-1.5-flash', 'gemini-2.0-flash', 'gemini-pro'];
+  
+  for (const modelName of modelsToTry) {
+    try {
+      const model = client.getGenerativeModel({ 
+        model: modelName,
+        systemInstruction: 'You are a helpful AI assistant for digital literacy questions, especially for senior citizens. Keep responses simple, clear, concise (2-3 sentences max), and encouraging.'
+      });
+      
+      const result = await model.generateContent(message);
+      const text = result.response.text();
+      if (text && text.trim()) {
+        return text.trim();
+      }
+    } catch (error) {
+      console.warn(`Gemini model ${modelName} failed, trying next model... Error:`, error.message);
+    }
+  }
+
+  return 'Sorry, I am unable to connect to AI right now. Please try asking again later.';
 }
 
 module.exports = { getAIResponse };
