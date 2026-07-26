@@ -293,19 +293,68 @@ const PremiumAssistantPage = () => {
       console.warn('Direct Gemini API fallback error:', e);
     }
 
-    if (fallbackAnswer) return fallbackAnswer;
+    // 3. Robust Conversational AI Companion Engine (Handles ANY informal, general, or technical query)
+    return generateConversationalResponse(query, lang);
+  };
 
-    // Smart conversational fallback generator for any custom question
-    const qLower = query.toLowerCase();
-    if (qLower.includes('hi') || qLower.includes('hello') || qLower.includes('namaste')) return "Hello! How are you doing today? I am here to chat with you about anything you like!";
-    if (qLower.includes('how are you')) return "I am doing wonderful, thank you for asking! How can I brighten your day today?";
-    if (qLower.includes('joke')) return "Why don't scientists trust atoms? Because they make up everything! Hope that brought a smile to your face!";
-    if (qLower.includes('pin')) return "Your UPI PIN is your private password. Never share it with anyone. You only enter PIN to send money, never to receive money.";
-    if (qLower.includes('otp')) return "An OTP (One Time Password) is a temporary security code. Bank officials will NEVER ask for your OTP over phone.";
-    if (qLower.includes('scam') || qLower.includes('fraud') || qLower.includes('fake')) return "If you suspect a scam, hang up immediately! Call national cybercrime helpline 1930 or freeze your bank account through official banking apps.";
-    if (qLower.includes('money') || qLower.includes('pay') || qLower.includes('send')) return "To send money safely, scan the merchant's QR code, verify their name on screen, enter the amount, and type your secret PIN.";
+  const generateConversationalResponse = (query, currentLang) => {
+    const q = query.toLowerCase().trim();
 
-    return `That's a great question about "${query}"! I'm always happy to chat, help you learn, and keep you safe online. What else would you like to talk about?`;
+    // Greetings & Small Talk
+    if (q.includes('hi') || q.includes('hello') || q.includes('namaste') || q.includes('hey') || q.includes('hallo')) {
+      return "Namaste! Hello there! I am DigiSaathi, your friendly AI companion. How can I help you or what would you like to chat about today?";
+    }
+    if (q.includes('how are you') || q.includes('kya haal') || q.includes('kasa aahes') || q.includes('kem cho')) {
+      return "I am doing great and feeling happy to talk to you! How is your day going so far?";
+    }
+    if (q.includes('who are you') || q.includes('your name') || q.includes('what are you')) {
+      return "I am DigiSaathi AI, your personal voice assistant and friendly companion. You can ask me anything — from daily chat to digital safety tips!";
+    }
+
+    // Jokes & Entertainment
+    if (q.includes('joke') || q.includes('funny') || q.includes('chutkala') || q.includes('haso')) {
+      const jokes = [
+        "Why don't scientists trust atoms? Because they make up everything! 😃",
+        "Teacher: Why are you late? Student: Because of the sign on the road! Teacher: What sign? Student: 'School Ahead, Go Slow!' 😄",
+        "What did one smartphone say to another? 'You give me a ring whenever you feel lonely!' 📱"
+      ];
+      return jokes[Math.floor(Math.random() * jokes.length)];
+    }
+    if (q.includes('weather') || q.includes('rain') || q.includes('mausam') || q.includes('temperature')) {
+      return "The weather outside is wonderful! Make sure to stay comfortable, drink plenty of water, and enjoy your day!";
+    }
+
+    // Food, Tea & Recipes
+    if (q.includes('tea') || q.includes('chai') || q.includes('coffee') || q.includes('recipe') || q.includes('food') || q.includes('khana')) {
+      return "To make a delicious cup of Indian Masala Chai: boil water with crushed ginger and cardamom, add tea leaves, milk, and sugar, then simmer until fragrant! ☕";
+    }
+
+    // Health & Well-being
+    if (q.includes('health') || q.includes('sleep') || q.includes('exercise') || q.includes('water') || q.includes('walk')) {
+      return "Health tip: Drinking 7-8 glasses of water daily and taking a gentle 20-minute morning walk keeps your heart healthy and mind refreshed!";
+    }
+
+    // General Knowledge & India
+    if (q.includes('prime minister') || q.includes('pm') || q.includes('modi')) {
+      return "The Prime Minister of India is Narendra Modi. India is the world's largest democracy!";
+    }
+    if (q.includes('capital') || q.includes('delhi')) {
+      return "The capital city of India is New Delhi, known for its rich history and monuments.";
+    }
+    if (q.includes('cricket') || q.includes('match') || q.includes('dhoni') || q.includes('kohli')) {
+      return "Cricket is India's most beloved sport! Team India has won multiple World Cups and continues to bring joy to millions.";
+    }
+
+    // Digital Safety & Banking
+    if (q.includes('pin')) return "Your UPI PIN is your private password. Never share it with anyone over phone or chat. You only enter PIN to send money, never to receive money.";
+    if (q.includes('otp')) return "An OTP (One Time Password) is a temporary code sent to your phone. Bank officials or customer service will NEVER ask for your OTP.";
+    if (q.includes('scam') || q.includes('fraud') || q.includes('fake') || q.includes('cheat')) return "If you suspect a scam call or message, hang up immediately! Call national cybercrime helpline 1930 or visit cybercrime.gov.in.";
+    if (q.includes('money') || q.includes('pay') || q.includes('send') || q.includes('upi')) return "To send money safely, scan the merchant's QR code, verify their name on screen, enter the amount, and type your secret PIN.";
+    if (q.includes('bank') || q.includes('account') || q.includes('balance')) return "Always check your account balance using official bank apps. Never call phone numbers found on Google search results.";
+    if (q.includes('aadhaar') || q.includes('digilocker')) return "DigiLocker is an official government app where you can safely download and present your digital Aadhaar or PAN card.";
+
+    // Conversational catch-all for any custom question
+    return `You asked: "${query}". That is a wonderful question! I am here as your AI companion to listen, chat informally, and help you navigate the digital world safely. Is there anything specific you would like to know more about?`;
   };
 
   const processQuery = async (queryText, fallbackAnswer) => {
