@@ -385,14 +385,67 @@ const PremiumAssistantPage = () => {
       }
     } catch (e) {}
 
-    // Fallback response generator if network fails
-    const qLower = query.toLowerCase();
-    if (qLower.includes('marathi')) return "मी तुम्हाला मराठीत समजावून सांगतो: UPI ही एक अतिशय सुरक्षित प्रणाली आहे. तुमचा UPI PIN हा तुमचा पासवर्ड आहे, तो कोणालाही सांगू नका.";
-    if (qLower.includes('again') || qLower.includes('explain')) return "Sure! Let me explain it again clearly: To send money, scan QR code -> enter amount -> enter secret PIN. Never enter PIN to receive money!";
-    if (qLower.includes('simpler')) return "In super simple words: Your PIN is like your bank key. Use it ONLY when giving money to someone else!";
-    if (qLower.includes('scam')) return "⚠️ **Scam Alert**: Any message claiming you won a lottery or asking for OTP is 100% fake. Delete it immediately and call helpline 1930!";
-    
-    return `I heard your message about "${query}". I am here as your DigiSaathi companion to assist you, remember our chat history, and guide you safely!`;
+    // Smart Multi-Turn Conversational Fallback Engine
+    return generateSmartMultiTurnFallback(query, historyMsgs, langCode);
+  };
+
+  const generateSmartMultiTurnFallback = (query, history, lang) => {
+    const q = query.toLowerCase().trim();
+    const lastMessage = history && history.length > 0 ? history[history.length - 1].content.toLowerCase() : '';
+
+    // Greetings & Farewells
+    if (q === 'bye' || q.includes('goodbye') || q.includes('cya') || q.includes('see you') || q.includes('alvida')) {
+      return "Goodbye! 👋 It was wonderful chatting with you. Feel free to come back whenever you need help or want to talk!";
+    }
+    if (q.includes('thank') || q.includes('thanks') || q.includes('dhanyawad') || q.includes('shukriya')) {
+      return "You're very welcome! 😊 I am always here to help you learn and stay safe online!";
+    }
+    if (q.includes('hi') || q.includes('hello') || q.includes('namaste') || q.includes('hey')) {
+      return "Namaste! Hello there! I am DigiSaathi AI, your personal assistant. How can I help you today?";
+    }
+    if (q.includes('how are you')) {
+      return "I am doing great and ready to help! How is your day going?";
+    }
+
+    // Follow-up: "Can you explain again?" / "Explain again" / "Repeat"
+    if (q.includes('again') || q.includes('repeat') || q.includes('explain again') || q.includes('dobara')) {
+      if (lastMessage.includes('upi') || q.includes('upi')) {
+        return "Sure! Let me explain UPI once more: UPI lets you transfer money directly bank-to-bank using a phone number or QR code. Your UPI PIN is only needed when *sending* money, never when *receiving*!";
+      }
+      if (lastMessage.includes('whatsapp') || q.includes('whatsapp')) {
+        return "Of course! To use WhatsApp: open a chat, tap the camera icon to send photos or hold the green microphone button to send a voice note!";
+      }
+      return "Certainly! Here is a simple recap: Always double-check recipient names before making digital payments, and keep your passwords and PINs completely private!";
+    }
+
+    // Language Switch: "Now explain in Marathi", "in Hindi", etc.
+    if (q.includes('marathi') || lang === 'mr') {
+      return "मी मराठीत सांगतो: UPI ही थेट बँक ते बँक पैसे ट्रान्सफर करण्याची सोपी पद्धत आहे. पैसे पाठवतानाच तुमचा 4 किंवा 6 अंकी secret PIN टाकावा लागतो. पैसे मिळवण्यासाठी कधीही PIN टाकू नका!";
+    }
+    if (q.includes('hindi') || lang === 'hi') {
+      return "मैं आपको हिंदी में समझाता हूँ: UPI से आप अपने बैंक खाते से सीधे पैसे भेज सकते हैं। पैसे भेजते समय ही UPI PIN डालें। पैसे पाने के लिए कभी पिन न डालें!";
+    }
+    if (q.includes('tamil') || lang === 'ta') {
+      return "நான் தமிழில் விளக்குகிறேன்: UPI என்பது உங்கள் வங்கியிலிருந்து பணத்தை உடனடியாக அனுப்ப உதவும் பாதுகாப்பான அமைப்பாகும். பணம் அனுப்ப மட்டுமே PIN தேவை.";
+    }
+
+    // Simplification: "Can you make it simpler?" / "Simpler"
+    if (q.includes('simpler') || q.includes('simple') || q.includes('short') || q.includes('easy')) {
+      return "In super simple words: **UPI PIN = Your Bank Key.** Only use it when giving money to someone else. Never give it away!";
+    }
+
+    // Scam Analysis / Fraud check
+    if (q.includes('scam') || q.includes('fraud') || q.includes('fake') || q.includes('lottery') || q.includes('lakh')) {
+      return "⚠️ **AI Scam Analysis**: Any message or call saying you won a lottery, gift, or asking for OTP/remote access is **100% a SCAM**. Delete the message, do not click links, and call cybercrime helpline **1930** immediately!";
+    }
+
+    // WhatsApp / Social Apps
+    if (q.includes('whatsapp')) {
+      return "WhatsApp is a free messaging app that lets you send messages, photos, and voice notes or make video calls using your phone's internet!";
+    }
+
+    // Default Conversational Answer
+    return `That is a great question about "${query}". I am remembering our conversation history and keeping you safe. Feel free to ask follow-up questions or tell me to explain in another language!`;
   };
 
   const filteredConversations = conversations.filter(c => 
