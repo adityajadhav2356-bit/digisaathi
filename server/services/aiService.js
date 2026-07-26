@@ -12,7 +12,13 @@ function getGeminiClient() {
   return genAI;
 }
 
-async function getAIResponse(message) {
+/**
+ * Generate multi-turn conversational response with context memory
+ * @param {string} message - Current user query
+ * @param {Array} history - Array of previous messages [{ role: 'user'|'assistant', content: string }]
+ * @param {string} language - User language preference (en, hi, mr, ta, te, gu, kn, ml, pa, bn)
+ */
+async function getAIResponse(message, history = [], language = 'en') {
   const client = getGeminiClient();
   if (!client) {
     return 'AI service is not configured. Please set the GEMINI_API_KEY environment variable.';
@@ -20,14 +26,25 @@ async function getAIResponse(message) {
 
   const modelsToTry = ['gemini-1.5-flash', 'gemini-2.0-flash', 'gemini-pro'];
   
+  // Format past history into text context if multi-turn
+  let contextText = `User Preferred Language: ${language}.\n`;
+  if (history && history.length > 0) {
+    contextText += "Previous Conversation Context:\n";
+    history.forEach(m => {
+      const sender = m.role === 'user' ? 'User' : 'Assistant';
+      contextText += `${sender}: ${m.content}\n`;
+    });
+  }
+  contextText += `User Current Question: ${message}`;
+
   for (const modelName of modelsToTry) {
     try {
       const model = client.getGenerativeModel({ 
         model: modelName,
-        systemInstruction: 'You are DigiSaathi AI, a warm, friendly, and informal AI companion for users and senior citizens in India. You can chat about ANYTHING — general knowledge, daily conversation, jokes, weather, recipes, health, life advice, as well as digital payments and internet safety. Keep responses warm, natural, simple, and concise (2-3 sentences max). Always respond in the language used by the user.'
+        systemInstruction: 'You are DigiSaathi AI, a warm, intelligent, ChatGPT-like conversational companion for users in India. Maintain multi-turn context memory, remember previous topics discussed, fulfill follow-up requests naturally (e.g. simplifying, translating to Marathi/Hindi, re-explaining), and answer in clear, friendly markdown.'
       });
       
-      const result = await model.generateContent(message);
+      const result = await model.generateContent(contextText);
       const text = result.response.text();
       if (text && text.trim()) {
         return text.trim();
