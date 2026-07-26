@@ -1,10 +1,13 @@
 import React, { useState, useEffect } from 'react';
 import { Volume2, VolumeX, Mic } from 'lucide-react';
 import { motion } from 'framer-motion';
+import { useLanguage } from '../context/LanguageContext';
 
 const FloatingVoiceAssistant = ({ textToRead, autoPlay = true, position = 'bottom-right' }) => {
   const [isPlaying, setIsPlaying] = useState(false);
   const [isListening, setIsListening] = useState(false); // For future microphone integration
+
+  const { lang } = useLanguage();
 
   useEffect(() => {
     if (autoPlay && textToRead) {
@@ -13,13 +16,19 @@ const FloatingVoiceAssistant = ({ textToRead, autoPlay = true, position = 'botto
     return () => {
       window.speechSynthesis.cancel();
     };
-  }, [textToRead, autoPlay]);
+  }, [textToRead, autoPlay, lang]);
 
   const speak = (text) => {
     if ('speechSynthesis' in window) {
       window.speechSynthesis.cancel();
       const utterance = new SpeechSynthesisUtterance(text);
-      utterance.lang = 'en-IN'; // Mocking Indian English for now
+      
+      const targetVoiceCode = {
+        'en': 'en-IN', 'hi': 'hi-IN', 'mr': 'mr-IN',
+        'gu': 'gu-IN', 'ta': 'ta-IN', 'bn': 'bn-IN', 'te': 'te-IN'
+      }[lang] || 'en-IN';
+      
+      utterance.lang = targetVoiceCode;
       utterance.rate = 0.9; // Slightly slower for seniors
       utterance.onend = () => setIsPlaying(false);
       utterance.onstart = () => setIsPlaying(true);
@@ -37,8 +46,8 @@ const FloatingVoiceAssistant = ({ textToRead, autoPlay = true, position = 'botto
   };
 
   const positions = {
-    'bottom-right': 'bottom-24 right-4 md:bottom-8 md:right-8',
-    'bottom-left': 'bottom-24 left-4 md:bottom-8 md:left-8',
+    'bottom-right': 'bottom-40 right-4 md:bottom-16 md:right-8',
+    'bottom-left': 'bottom-40 left-4 md:bottom-16 md:left-8',
     'top-right': 'top-20 right-4',
   };
 

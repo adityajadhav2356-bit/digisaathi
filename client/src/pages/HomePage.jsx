@@ -137,24 +137,6 @@ const HomePage = () => {
           <ChevronRight size={18} className="text-red-400 shrink-0" />
         </motion.button>
 
-        {/* ── Payment Safety Banner ── */}
-        <motion.button
-          initial={{ opacity: 0, x: -10 }} animate={{ opacity: 1, x: 0 }} transition={{ delay: 0.15 }}
-          whileTap={{ scale: 0.98 }}
-          onClick={() => navigate('/safety')}
-          className="w-full flex items-center gap-4 bg-gradient-to-r from-blue-600 to-indigo-600 rounded-2xl p-4 border border-blue-500 shadow-lg text-left overflow-hidden relative"
-        >
-          <div className="absolute top-0 right-0 w-24 h-24 bg-white/10 rounded-full blur-xl -mr-4 -mt-4"></div>
-          <div className="w-12 h-12 bg-white/20 rounded-full flex items-center justify-center shrink-0 border border-white/30 relative z-10 backdrop-blur-sm">
-            <ShieldCheck size={28} className="text-white" />
-          </div>
-          <div className="flex-1 min-w-0 relative z-10">
-            <p className="text-blue-100 font-bold text-xs uppercase tracking-widest mb-0.5">Protect Yourself</p>
-            <p className="text-white font-black text-lg leading-tight">AI Payment Safety & Fraud Protection</p>
-          </div>
-          <ChevronRight size={24} className="text-white shrink-0 relative z-10" />
-        </motion.button>
-
         {/* ── Learning Modules ── */}
         <div>
           <div className="flex items-center justify-between mb-3 px-1">
