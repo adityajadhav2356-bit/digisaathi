@@ -34,10 +34,12 @@ DigiSaathi is a full-stack web application designed specifically for senior citi
    ```bash
    npm install
    ```
+```text id="9k5m3x"
 3. Create a `.env` file based on `.env.example`:
    ```bash
    PORT=5000
    FIREBASE_SERVICE_ACCOUNT='{"type":"service_account","project_id":"..."}'
+   > **Note:** Keep the `.env` file private and never commit Firebase service account credentials or other secrets to the repository.
    ```
    *Note: Get your service account JSON from Project Settings -> Service Accounts in the Firebase Console.*
 4. Seed the database with modules and fraud alerts:
