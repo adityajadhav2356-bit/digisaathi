@@ -1,0 +1,518 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI Negotiation Challenge - Workshop Registration 2026</title>
+    <meta name="description" content="Workshop on Bargaining Shopkeeper Agent with Gemini 3 and ADK. Organized by Indian OpenSource Community at JSPM RSCOE Pune on 8 August 2026.">
+    <meta name="theme-color" content="#05050d">
+
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;600;700;800;900&family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
+
+    <!-- FontAwesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+
+    <!-- Main Stylesheet -->
+    <link rel="stylesheet" href="style.css">
+</head>
+<body class="loading">
+
+    <!-- Custom Animated Cursor -->
+    <div id="custom-cursor">
+        <div class="cursor-dot"></div>
+        <div class="cursor-ring"></div>
+    </div>
+
+    <!-- Mouse Spotlight Radial Glow -->
+    <div id="cursor-glow"></div>
+
+    <!-- Background Particle Canvas -->
+    <canvas id="particle-canvas"></canvas>
+
+    <!-- Preloader -->
+    <div id="preloader">
+        <div class="loader-content">
+            <div class="loader-ring">
+                <div class="loader-core"></div>
+            </div>
+            <div class="loader-brand">
+                <span class="badge-ai">GEMINI 3 + ADK</span>
+                <h2>AI NEGOTIATION CHALLENGE</h2>
+            </div>
+            <div class="progress-bar-container">
+                <div class="progress-bar" id="progress-bar"></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Header Navigation -->
+    <header class="top-nav">
+        <div class="nav-brand">
+            <div class="brand-logo">
+                <i class="fa-solid fa-brain"></i>
+            </div>
+            <div class="brand-info">
+                <span class="brand-title">Indian OpenSource Community</span>
+                <span class="brand-subtitle">JSPM RSCOE Pune</span>
+            </div>
+        </div>
+
+        <div class="nav-actions">
+            <!-- Direct Download CSV Button -->
+            <button id="direct-export-csv-btn" class="csv-btn" title="Download Registrations CSV">
+                <i class="fa-solid fa-file-csv"></i>
+                <span class="btn-text">Download CSV</span>
+            </button>
+        </div>
+    </header>
+
+    <!-- Main Story Stage Container -->
+    <main id="story-viewport" class="story-viewport">
+
+        <!-- ================= SCENE 1: Welcome & Poster ================= -->
+        <section id="scene-1" class="scene active-scene">
+            <div class="backdrop-poster">
+                <img src="assets/poster.jpeg" alt="Workshop Poster Background Blur">
+                <div class="backdrop-overlay"></div>
+            </div>
+
+            <div class="scene-content">
+                <div class="welcome-header">
+                    <div class="welcome-badge">
+                        <i class="fa-solid fa-wand-magic-sparkles"></i>
+                        <span>Interactive AI Experience</span>
+                    </div>
+                    <h1 class="glow-title">
+                        Welcome to the <br>
+                        <span class="gradient-text">AI Negotiation Challenge</span>
+                    </h1>
+                    <p class="welcome-subtitle">
+                        Step into the future of autonomous agents. Live workshop on <strong>"Bargaining Shopkeeper"</strong> agent with <strong>Gemini 3</strong> &amp; <strong>ADK</strong>.
+                    </p>
+                </div>
+
+                <!-- 3D Floating Poster Container -->
+                <div class="poster-card-wrapper">
+                    <div class="poster-card-3d" id="hero-poster-card">
+                        <div class="glow-border-frame"></div>
+                        <img src="assets/poster.jpeg" alt="Bargaining Shopkeeper Workshop Poster" class="poster-img">
+                        <div class="poster-sheen"></div>
+                    </div>
+
+                    <!-- Date & Speaker Info Chips Placed Aside below poster -->
+                    <div class="poster-info-bar">
+                        <div class="glass-chip date-chip">
+                            <i class="fa-solid fa-calendar-day"></i>
+                            <div>
+                                <span>Date</span>
+                                <strong>8 August 2026</strong>
+                            </div>
+                        </div>
+
+                        <div class="glass-chip speaker-chip">
+                            <i class="fa-solid fa-microphone-lines"></i>
+                            <div>
+                                <span>Speaker</span>
+                                <strong>Ashutosh S Bhakare</strong>
+                                <small>GDE &amp; Docker Captain</small>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Action Button -->
+                <div class="scene-actions">
+                    <button class="btn-primary glow-btn" id="start-story-btn">
+                        <span>Continue</span>
+                        <i class="fa-solid fa-arrow-right-long"></i>
+                    </button>
+                </div>
+            </div>
+        </section>
+
+        <!-- ================= SCENE 2: Walking Boy Arrival ================= -->
+        <section id="scene-2" class="scene">
+            <div class="scene-content flex-center">
+                <!-- Stage for Boy Walk -->
+                <div class="stage-container">
+                    <div class="stage-floor">
+                        <div class="floor-grid"></div>
+                        <div class="floor-spotlight"></div>
+                    </div>
+
+                    <!-- SVG Cartoon/3D Boy Character carrying Briefcase -->
+                    <div id="character-wrapper" class="character-wrapper">
+                        <svg id="boy-svg" viewBox="0 0 300 450" xmlns="http://www.w3.org/2000/svg">
+                            <defs>
+                                <radialGradient id="headGlow" cx="50%" cy="50%" r="50%">
+                                    <stop offset="0%" stop-color="#c084fc" stop-opacity="0.4"/>
+                                    <stop offset="100%" stop-color="#000" stop-opacity="0"/>
+                                </radialGradient>
+                                <linearGradient id="briefcaseGrad" x1="0" y1="0" x2="1" y2="1">
+                                    <stop offset="0%" stop-color="#9A3412"/>
+                                    <stop offset="50%" stop-color="#7C2D12"/>
+                                    <stop offset="100%" stop-color="#451A03"/>
+                                </linearGradient>
+                                <linearGradient id="briefcaseGold" x1="0" y1="0" x2="1" y2="0">
+                                    <stop offset="0%" stop-color="#FDE047"/>
+                                    <stop offset="100%" stop-color="#CA8A04"/>
+                                </linearGradient>
+                                <linearGradient id="shirtGrad" x1="0" y1="0" x2="0" y2="1">
+                                    <stop offset="0%" stop-color="#F8FAFC"/>
+                                    <stop offset="100%" stop-color="#CBD5E1"/>
+                                </linearGradient>
+                                <linearGradient id="trouserGrad" x1="0" y1="0" x2="0" y2="1">
+                                    <stop offset="0%" stop-color="#1E293B"/>
+                                    <stop offset="100%" stop-color="#0F172A"/>
+                                </linearGradient>
+                            </defs>
+
+                            <ellipse id="boy-shadow" cx="150" cy="415" rx="55" ry="12" fill="rgba(0, 0, 0, 0.6)" />
+
+                            <!-- Character Group -->
+                            <g id="boy-character">
+                                <!-- Head & Hair -->
+                                <g id="boy-head-group">
+                                    <rect x="142" y="115" width="16" height="25" rx="5" fill="#e0a980"/>
+                                    <path d="M125,70 Q150,55 175,70 Q185,100 170,120 Q150,132 130,120 Q115,100 125,70 Z" fill="#f0be96"/>
+                                    <circle cx="119" cy="95" r="7" fill="#e0a980"/>
+                                    <circle cx="181" cy="95" r="7" fill="#e0a980"/>
+                                    <path d="M118,75 C115,45 140,30 155,30 C175,30 188,42 184,72 C178,55 160,50 148,52 C135,54 125,62 118,75 Z" fill="#1e1b18"/>
+                                    <path d="M125,65 Q145,40 178,55 Q160,42 138,50 Z" fill="#2d2724"/>
+                                    <g id="boy-eyes">
+                                        <ellipse cx="138" cy="90" rx="4" ry="5" fill="#1e1b18"/>
+                                        <ellipse cx="162" cy="90" rx="4" ry="5" fill="#1e1b18"/>
+                                        <circle cx="139" cy="89" r="1.5" fill="#ffffff"/>
+                                        <circle cx="163" cy="89" r="1.5" fill="#ffffff"/>
+                                        <path d="M132,82 Q138,79 144,82" stroke="#1e1b18" stroke-width="2.5" stroke-linecap="round" fill="none"/>
+                                        <path d="M156,82 Q162,79 168,82" stroke="#1e1b18" stroke-width="2.5" stroke-linecap="round" fill="none"/>
+                                    </g>
+                                    <path d="M150,90 Q152,98 147,100" stroke="#d4976c" stroke-width="2" stroke-linecap="round" fill="none"/>
+                                    <path id="boy-mouth" d="M142,108 Q150,116 158,108" stroke="#a65438" stroke-width="2.5" stroke-linecap="round" fill="none"/>
+                                </g>
+
+                                <!-- Torso & Formal Shirt -->
+                                <g id="boy-torso-group">
+                                    <path d="M120,135 L180,135 L186,240 L114,240 Z" fill="url(#shirtGrad)"/>
+                                    <polygon points="135,135 150,152 142,135" fill="#94A3B8"/>
+                                    <polygon points="165,135 150,152 158,135" fill="#94A3B8"/>
+                                    <circle cx="150" cy="165" r="2" fill="#475569"/>
+                                    <circle cx="150" cy="185" r="2" fill="#475569"/>
+                                    <circle cx="150" cy="205" r="2" fill="#475569"/>
+                                    <circle cx="150" cy="225" r="2" fill="#475569"/>
+                                    <rect x="114" y="240" width="72" height="12" fill="#09090b" rx="2"/>
+                                    <rect x="144" y="241" width="12" height="10" fill="url(#briefcaseGold)" rx="1"/>
+                                </g>
+
+                                <!-- Left Arm -->
+                                <g id="boy-left-arm">
+                                    <path id="left-arm-path" d="M120,140 Q100,185 95,225" stroke="#CBD5E1" stroke-width="18" stroke-linecap="round" fill="none"/>
+                                    <circle id="left-hand" cx="95" cy="230" r="9" fill="#f0be96"/>
+                                </g>
+
+                                <!-- Right Arm & Carrying Briefcase -->
+                                <g id="boy-right-arm">
+                                    <path id="right-arm-path" d="M180,140 Q198,185 205,225" stroke="#CBD5E1" stroke-width="18" stroke-linecap="round" fill="none"/>
+                                    <circle id="right-hand" cx="205" cy="230" r="9" fill="#f0be96"/>
+                                    
+                                    <!-- Brown Briefcase -->
+                                    <g id="briefcase-element" transform="translate(180, 220)">
+                                        <path d="M20,5 Q25,-8 30,5" stroke="url(#briefcaseGold)" stroke-width="4" fill="none"/>
+                                        <rect x="0" y="5" width="52" height="38" rx="5" fill="url(#briefcaseGrad)" stroke="#270A03" stroke-width="2"/>
+                                        <rect x="10" y="5" width="6" height="38" fill="#451A03"/>
+                                        <rect x="36" y="5" width="6" height="38" fill="#451A03"/>
+                                        <rect x="9" y="20" width="8" height="6" fill="url(#briefcaseGold)" rx="1"/>
+                                        <rect x="35" y="20" width="8" height="6" fill="url(#briefcaseGold)" rx="1"/>
+                                        <circle cx="26" cy="22" r="3" fill="url(#briefcaseGold)"/>
+                                    </g>
+                                </g>
+
+                                <!-- Legs & Trousers -->
+                                <g id="boy-legs">
+                                    <g id="leg-left">
+                                        <path d="M132,252 L128,370" stroke="url(#trouserGrad)" stroke-width="22" stroke-linecap="round"/>
+                                        <path d="M115,370 L135,370 Q138,382 112,382 Z" fill="#09090b"/>
+                                    </g>
+                                    <g id="leg-right">
+                                        <path d="M168,252 L172,370" stroke="url(#trouserGrad)" stroke-width="22" stroke-linecap="round"/>
+                                        <path d="M162,370 L182,370 Q188,382 162,382 Z" fill="#09090b"/>
+                                    </g>
+                                </g>
+
+                                <!-- Waving Arm -->
+                                <g id="boy-wave-arm" style="opacity: 0; display: none;">
+                                    <path d="M120,140 Q90,100 80,65" stroke="#CBD5E1" stroke-width="18" stroke-linecap="round" fill="none"/>
+                                    <circle cx="80" cy="60" r="10" fill="#f0be96"/>
+                                </g>
+                            </g>
+                        </svg>
+                    </div>
+                </div>
+
+                <div class="scene-footer">
+                    <button class="btn-primary glow-btn" id="to-scene-3-btn">
+                        <span>Continue</span>
+                        <i class="fa-solid fa-arrow-right-long"></i>
+                    </button>
+                </div>
+            </div>
+        </section>
+
+        <!-- ================= SCENE 3: Placing Briefcase & Cyber Glow ================= -->
+        <section id="scene-3" class="scene">
+            <div class="scene-content flex-center">
+                <!-- Cyber Pedestal Stage -->
+                <div class="pedestal-stage">
+                    <div class="cyber-pedestal">
+                        <div class="pedestal-top"></div>
+                        <div class="pedestal-ring"></div>
+                        <div class="pedestal-base"></div>
+                    </div>
+
+                    <!-- Briefcase Container -->
+                    <div id="pedestal-briefcase-container" class="pedestal-briefcase-container">
+                        <!-- Light Beam Emitter -->
+                        <div id="light-beam" class="light-beam">
+                            <div class="beam-core"></div>
+                            <div class="beam-particles" id="beam-particles"></div>
+                        </div>
+
+                        <!-- Briefcase Graphic -->
+                        <div id="briefcase-3d" class="briefcase-3d">
+                            <div class="briefcase-bottom">
+                                <div class="interior-glow"></div>
+                                <div class="briefcase-latch latch-left"></div>
+                                <div class="briefcase-latch latch-right"></div>
+                            </div>
+                            <div class="briefcase-top" id="briefcase-top-lid">
+                                <div class="lid-handle"></div>
+                                <div class="lid-texture"></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="scene-footer">
+                    <button class="btn-primary glow-btn" id="open-briefcase-btn">
+                        <span>Continue</span>
+                        <i class="fa-solid fa-arrow-right-long"></i>
+                    </button>
+                </div>
+            </div>
+        </section>
+
+        <!-- ================= SCENE 4: Registration Form ================= -->
+        <section id="scene-4" class="scene">
+            <div class="scene-content flex-center">
+
+                <!-- Glassmorphism Registration Card -->
+                <div class="registration-glass-card visible" id="registration-card">
+                    <div class="card-border-glow"></div>
+
+                    <!-- Card Header -->
+                    <div class="card-header">
+                        <div class="header-badge">
+                            <i class="fa-solid fa-bolt-lightning"></i>
+                            <span>Official Event Pass</span>
+                        </div>
+                        <h2 class="form-title">Workshop Registration</h2>
+                        <p class="form-subtitle">
+                            Bargaining Shopkeeper Agent with <span>Gemini 3</span> &amp; <span>ADK</span>
+                        </p>
+                        <div class="seats-counter-badge" id="seats-counter-badge">
+                            <i class="fa-solid fa-ticket-simple"></i>
+                            <span id="seats-left-text">Loading Seats...</span>
+                        </div>
+                    </div>
+
+                    <!-- Registration Full Banner (Hidden by default) -->
+                    <div id="seats-full-banner" class="seats-full-banner" style="display: none;">
+                        <i class="fa-solid fa-circle-exclamation"></i>
+                        <div>
+                            <h3>Registration Closed</h3>
+                            <p>Maximum limit of <strong>50 participants</strong> has been reached!</p>
+                        </div>
+                    </div>
+
+                    <!-- Registration Form -->
+                    <form id="registration-form" novalidate>
+                        <div class="form-grid">
+                            
+                            <!-- Full Name -->
+                            <div class="input-group">
+                                <label for="fullName" class="field-label">
+                                    <i class="fa-solid fa-user"></i> Full Name <span class="required-star">*</span>
+                                </label>
+                                <input type="text" id="fullName" name="fullName" class="form-control-input" placeholder="e.g. Rahul Sharma" required>
+                                <span class="error-msg">Please enter your full name</span>
+                            </div>
+
+                            <!-- Division Dropdown -->
+                            <div class="input-group">
+                                <label for="division" class="field-label">
+                                    <i class="fa-solid fa-users-rectangle"></i> Division <span class="required-star">*</span>
+                                </label>
+                                <div class="select-wrapper">
+                                    <select id="division" name="division" class="form-control-input select-input" required>
+                                        <option value="" disabled selected>Select Division (A, B, C)</option>
+                                        <option value="A">Division A</option>
+                                        <option value="B">Division B</option>
+                                        <option value="C">Division C</option>
+                                    </select>
+                                    <i class="fa-solid fa-chevron-down select-icon"></i>
+                                </div>
+                                <span class="error-msg">Please select your division</span>
+                            </div>
+
+                            <!-- RBT Number -->
+                            <div class="input-group">
+                                <label for="rbtNumber" class="field-label">
+                                    <i class="fa-solid fa-id-card"></i> RBT Number <span class="required-star">*</span>
+                                </label>
+                                <input type="text" id="rbtNumber" name="rbtNumber" class="form-control-input" placeholder="e.g. RBT-9988" required>
+                                <span class="error-msg">Please enter RBT number</span>
+                            </div>
+
+                            <!-- Roll Number -->
+                            <div class="input-group">
+                                <label for="rollNumber" class="field-label">
+                                    <i class="fa-solid fa-hashtag"></i> Roll Number <span class="required-star">*</span>
+                                </label>
+                                <input type="text" id="rollNumber" name="rollNumber" class="form-control-input" placeholder="e.g. 45" required>
+                                <span class="error-msg">Please enter your roll number</span>
+                            </div>
+
+                            <!-- Email Address -->
+                            <div class="input-group full-width">
+                                <label for="collegeEmail" class="field-label">
+                                    <i class="fa-solid fa-envelope"></i> Email Address <span class="required-star">*</span>
+                                </label>
+                                <input type="email" id="collegeEmail" name="collegeEmail" class="form-control-input" placeholder="e.g. rahul@gmail.com" required>
+                                <span class="error-msg">Please enter a valid email address</span>
+                            </div>
+
+                            <!-- Phone Number -->
+                            <div class="input-group full-width">
+                                <label for="phoneNumber" class="field-label">
+                                    <i class="fa-solid fa-phone"></i> Phone Number <span class="required-star">*</span>
+                                </label>
+                                <input type="tel" id="phoneNumber" name="phoneNumber" class="form-control-input" placeholder="e.g. 9876543210" required pattern="[0-9]{10}">
+                                <span class="error-msg">Please enter a valid 10-digit mobile number</span>
+                            </div>
+                        </div>
+
+                        <!-- Form Submit Button -->
+                        <div class="form-actions">
+                            <button type="submit" id="submit-btn" class="btn-register glow-btn-primary">
+                                <span class="btn-content">
+                                    <span>Register Now</span>
+                                    <i class="fa-solid fa-rocket"></i>
+                                </span>
+                                <span class="btn-ripple-container"></span>
+                            </button>
+                        </div>
+                    </form>
+                </div>
+
+            </div>
+        </section>
+
+    </main>
+
+    <!-- ================= SUCCESS OVERLAY & TICKET MODAL ================= -->
+    <div id="success-modal" class="modal-overlay">
+        <div class="modal-card">
+            <div class="confetti-emitter"></div>
+            
+            <div class="modal-icon">
+                <i class="fa-solid fa-circle-check"></i>
+            </div>
+
+            <h2 class="modal-title">🎉 Registration Successful!</h2>
+            <p class="modal-message">
+                See you on <strong>8 August 2026</strong>.
+            </p>
+
+            <div class="event-date-card">
+                <i class="fa-solid fa-calendar-check"></i>
+                <div>
+                    <h3>8 August 2026</h3>
+                    <p>Venue: JSPM RSCOE Pune</p>
+                </div>
+            </div>
+
+            <!-- Ticket Summary Pass -->
+            <div class="ticket-preview" id="ticket-pass">
+                <div class="ticket-header">
+                    <span class="ticket-tag">VIP DELEGATE PASS</span>
+                    <span class="ticket-id" id="ticket-id-display">#AI-2026-889</span>
+                </div>
+                <div class="ticket-body">
+                    <h4 id="pass-name-display">Delegate Name</h4>
+                    <div class="ticket-grid">
+                        <div>
+                            <span>Division</span>
+                            <strong id="pass-div-display">Div A</strong>
+                        </div>
+                        <div>
+                            <span>RBT No.</span>
+                            <strong id="pass-rbt-display">RBT-001</strong>
+                        </div>
+                        <div>
+                            <span>Roll No.</span>
+                            <strong id="pass-roll-display">101</strong>
+                        </div>
+                        <div>
+                            <span>Topic</span>
+                            <strong>Gemini 3 &amp; ADK</strong>
+                        </div>
+                    </div>
+                </div>
+                <div class="ticket-footer">
+                    <i class="fa-solid fa-qrcode qr-icon"></i>
+                    <span>Present this pass at entry desk</span>
+                </div>
+            </div>
+
+            <div class="modal-actions" style="gap: 12px; display: flex;">
+                <button class="btn-secondary glow-btn-subtle" id="modal-download-csv-btn">
+                    <i class="fa-solid fa-file-csv"></i>
+                    <span>Download CSV</span>
+                </button>
+                <button class="btn-primary glow-btn" id="close-modal-btn">
+                    <i class="fa-solid fa-check"></i>
+                    <span>Done &amp; Return</span>
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- GSAP & Plugins -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
+    
+    <!-- Canvas Confetti -->
+    <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.9.3/dist/confetti.browser.min.js"></script>
+
+    <!-- App Logic -->
+    <script src="script.js"></script>
+
+    <!-- Inline Safety Preloader Dismissal -->
+    <script>
+        window.addEventListener('load', function() {
+            setTimeout(function() {
+                var loader = document.getElementById('preloader');
+                if (loader) {
+                    loader.style.opacity = '0';
+                    loader.style.visibility = 'hidden';
+                    loader.style.pointerEvents = 'none';
+                    loader.style.display = 'none';
+                }
+                document.body.classList.remove('loading');
+            }, 150);
+        });
+    </script>
+</body>
+</html>

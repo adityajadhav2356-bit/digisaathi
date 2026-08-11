@@ -1,0 +1,85 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+    
+    // Helper Functions
+    function isAuthenticated() {
+      return request.auth != null;
+    }
+    
+    function isOwner(userId) {
+      return isAuthenticated() && request.auth.uid == userId;
+    }
+
+    function getUserData() {
+      return get(/databases/$(database)/documents/users/$(request.auth.uid)).data;
+    }
+
+    function hasRole(role) {
+      return isAuthenticated() && getUserData().role == role;
+    }
+
+    // Users Collection
+    match /users/{userId} {
+      allow read, write: if isOwner(userId) || hasRole('Volunteer') || hasRole('NGO');
+    }
+
+    // Volunteers Collection
+    match /volunteers/{volunteerId} {
+      allow read: if isAuthenticated();
+      allow write: if isOwner(volunteerId) || hasRole('NGO');
+    }
+
+    // NGOs Collection
+    match /ngos/{ngoId} {
+      allow read: if isAuthenticated();
+      allow write: if isOwner(ngoId);
+    }
+
+    // Appointments Collection
+    match /appointments/{appointmentId} {
+      allow read, write: if isAuthenticated();
+    }
+
+    // Chat History Collection
+    match /chatHistory/{chatId} {
+      allow read, write: if isAuthenticated() && resource.data.userId == request.auth.uid;
+      allow create: if isAuthenticated();
+    }
+
+    // Payment Safety & Fraud Reports
+    match /paymentSafety/{docId} {
+      allow read, write: if isAuthenticated();
+    }
+    
+    match /scamReports/{docId} {
+      allow read, write: if isAuthenticated();
+    }
+
+    // Notifications
+    match /notifications/{notificationId} {
+      allow read, write: if isAuthenticated();
+    }
+
+    // Government Schemes
+    match /governmentSchemes/{schemeId} {
+      allow read: if true;
+      allow write: if hasRole('NGO');
+    }
+
+    // Learning Progress
+    match /learningProgress/{progressId} {
+      allow read, write: if isAuthenticated();
+    }
+
+    // Voice History
+    match /voiceHistory/{historyId} {
+      allow read, write: if isAuthenticated();
+    }
+
+    // Settings
+    match /settings/{userId} {
+      allow read, write: if isOwner(userId);
+    }
+  }
+}

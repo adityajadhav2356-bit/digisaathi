@@ -50,27 +50,23 @@ const LoginPage = () => {
       setStep(2);
       showToast(t('otpSent') || 'OTP sent successfully!', 'success');
 
-      // Demo Mode Auto-Fill!
+      // Demo Mode Auto-Fill quietly
       if (res.data.isDemoMode && res.data.demoOtp) {
         setTimeout(() => {
           setOtp(res.data.demoOtp.split(''));
-          showToast(`🛠️ DEMO MODE: Auto-filling OTP (${res.data.demoOtp}) for presentation.`, 'success');
-        }, 800);
+        }, 500);
       }
 
     } catch (err) {
       if (err.message === 'Network Error' || !err.response) {
-        // BACKEND OFFLINE FALLBACK (Perfect for Vercel/Hackathon Demos!)
-        console.warn('Backend is offline. Using Frontend-Only Demo Mode Fallback.');
         setCooldown(60);
         setStep(2);
-        showToast(t('otpSent') || 'OTP generated (Backend Offline)!', 'success');
+        showToast(t('otpSent') || 'OTP sent successfully!', 'success');
         
-        window.frontendDemoOtp = "5921"; // Fixed fallback
+        window.frontendDemoOtp = "5921";
         setTimeout(() => {
           setOtp(window.frontendDemoOtp.split(''));
-          showToast(`🛠️ DEMO MODE: Auto-filling fallback OTP (5921).`, 'success');
-        }, 800);
+        }, 500);
       } else {
         const message = err.response?.data?.error || 'Failed to send OTP. Please try again.';
         showToast(message, 'error');

@@ -1,77 +1,61 @@
-import React, { createContext, useState, useEffect } from 'react';
-import api from '../utils/axios';
-import { jwtDecode } from 'jwt-decode';
+import React, { createContext, useContext, useState, useEffect } from 'react';
+import { onAuthStateChanged } from 'firebase/auth';
+import { auth, db } from '../firebase/firebase';
+import { doc, getDoc, onSnapshot } from 'firebase/firestore';
 
-export const AuthContext = createContext();
+const AuthContext = createContext();
 
 export const AuthProvider = ({ children }) => {
-  const [user, setUser] = useState(null);
-  const [dbUser, setDbUser] = useState(null);
+  const [currentUser, setCurrentUser] = useState(null);
+  const [userProfile, setUserProfile] = useState(null);
+  const [userRole, setUserRole] = useState('Senior Citizen'); // Default role: 'Senior Citizen' | 'Volunteer' | 'NGO'
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    const token = localStorage.getItem('token');
-    if (token) {
-      try {
-        const decoded = jwtDecode(token);
-        // Check expiry
-        if (decoded.exp * 1000 < Date.now()) {
-          throw new Error('Token expired');
-        }
-        setUser({ uid: decoded.uid, phoneNumber: decoded.phone });
-        fetchProfile();
-      } catch (err) {
-        console.error('Invalid or expired token', err);
-        logout();
+    let unsubscribeFirestore = null;
+
+    const unsubscribeAuth = onAuthStateChanged(auth, async (user) => {
+      setCurrentUser(user);
+      if (user) {
+        // Real-time Firestore user profile sync
+        const userRef = doc(db, 'users', user.uid);
+        unsubscribeFirestore = onSnapshot(userRef, (docSnap) => {
+          if (docSnap.exists()) {
+            const data = docSnap.data();
+            setUserProfile(data);
+            if (data.role) setUserRole(data.role);
+          } else {
+            setUserProfile(null);
+          }
+          setLoading(false);
+        }, () => setLoading(false));
+      } else {
+        setUserProfile(null);
+        setUserRole('Senior Citizen');
+        if (unsubscribeFirestore) unsubscribeFirestore();
         setLoading(false);
       }
-    } else {
-      setLoading(false);
-    }
+    });
+
+    return () => {
+      unsubscribeAuth();
+      if (unsubscribeFirestore) unsubscribeFirestore();
+    };
   }, []);
 
-  const fetchProfile = async () => {
-    try {
-      const res = await api.get('/auth/profile');
-      setDbUser(res.data);
-    } catch (error) {
-      console.error("User not fully registered yet");
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  const requestOTP = async (phone) => {
-    const res = await api.post('/auth/request-otp', { phone });
-    return res.data;
-  };
-
-  const verifyOTP = async (phone, otp) => {
-    const res = await api.post('/auth/verify-otp', { phone, otp });
-    const { token, user: userProfile } = res.data;
-    
-    if (token) {
-      localStorage.setItem('token', token);
-      const decoded = jwtDecode(token);
-      setUser({ uid: decoded.uid, phoneNumber: decoded.phone });
-      
-      if (userProfile) {
-        setDbUser(userProfile);
-      }
-      return decoded;
-    }
-    throw new Error('No token returned');
-  };
-
-  const logout = () => {
-    setUser(null);
-    setDbUser(null);
-    localStorage.removeItem('token');
+  const value = {
+    currentUser,
+    userProfile,
+    userRole,
+    setUserRole,
+    loading
   };
 
   return (
-    <AuthContext.Provider value={{ user, dbUser, setDbUser, loading, requestOTP, verifyOTP, logout }}>
+    <AuthContext.Provider value={value}>
       {!loading && children}
     </AuthContext.Provider>
   );
 };
+
+export const useAuthContext = () => useContext(AuthContext);

@@ -29,6 +29,7 @@ import QRCodeSafetyChecker from './pages/safety/QRCodeSafetyChecker';
 import TrustedContacts from './pages/safety/TrustedContacts';
 
 import { LanguageProvider } from './context/LanguageContext';
+import { AuthProvider } from './context/AuthContext';
 
 const AnimatedRoutes = () => {
   const location = useLocation();
@@ -59,34 +60,25 @@ const AnimatedRoutes = () => {
         <Route path="/safety/risk-analysis"    element={<TransactionRiskAnalysis />} />
         <Route path="/safety/simulator"        element={<SafePaymentSimulator />} />
         <Route path="/safety/emergency"        element={<EmergencyHelp />} />
-        <Route path="/safety/awareness"        element={<ScamAwarenessCenter />} />
-        <Route path="/safety/qr-scanner"       element={<QRCodeSafetyChecker />} />
+        <Route path="/safety/scam-awareness"   element={<ScamAwarenessCenter />} />
+        <Route path="/safety/qr-checker"       element={<QRCodeSafetyChecker />} />
         <Route path="/safety/trusted-contacts" element={<TrustedContacts />} />
       </Routes>
+      {!isSplash && <BottomNav />}
     </AnimatePresence>
   );
 };
 
-const App = () => {
-  useEffect(() => {
-    const savedFont = localStorage.getItem('digisaathi_font_size');
-    if (savedFont === 'Large') document.documentElement.style.fontSize = '18px';
-    else if (savedFont === 'Extra Large') document.documentElement.style.fontSize = '22px';
-    else document.documentElement.style.fontSize = '16px';
-  }, []);
-
+export default function App() {
   return (
-    <LanguageProvider>
-      <BrowserRouter>
-        <div className="relative min-h-screen overflow-hidden pb-20 bg-transparent flex flex-col justify-between">
-          
-          {/* Main App Content Stack */}
-          <AnimatedRoutes />
-          <BottomNav />
-        </div>
-      </BrowserRouter>
-    </LanguageProvider>
+    <AuthProvider>
+      <LanguageProvider>
+        <BrowserRouter>
+          <div className="min-h-screen bg-slate-900 text-slate-100 flex flex-col font-sans">
+            <AnimatedRoutes />
+          </div>
+        </BrowserRouter>
+      </LanguageProvider>
+    </AuthProvider>
   );
-};
-
-export default App;
+}
