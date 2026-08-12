@@ -18,6 +18,7 @@ const ServicesCard = ({ children, className = '', onClick, ...props }) => {
   const [spotlightY, setSpotlightY] = useState(50);
 
   const handleMouseMove = (e) => {
+    if (e.target.closest('select, button, input, textarea, option, label')) return;
     const rect = e.currentTarget.getBoundingClientRect();
     const x = e.clientX - rect.left;
     const y = e.clientY - rect.top;
@@ -36,8 +37,7 @@ const ServicesCard = ({ children, className = '', onClick, ...props }) => {
 
   return (
     <motion.div
-      whileHover={{ y: -6, scale: 1.025 }}
-      whileTap={{ scale: 0.975 }}
+      whileHover={{ y: -4 }}
       onMouseMove={handleMouseMove}
       onMouseLeave={handleMouseLeave}
       onClick={onClick}
@@ -609,6 +609,161 @@ const GpsLiveTracker = () => {
   );
 };
 
+// Senior-friendly Slot & Package Configurator component
+const ServiceSlotConfigurator = ({ item, details, state, updateServiceState, speakText, t, categoryId }) => {
+  return (
+    <div className="space-y-4">
+      {/* Package Selection */}
+      <div className="mt-4 border-t border-dashed border-slate-200/80 pt-4 relative z-10">
+        <span className="text-xs font-black text-slate-700 uppercase tracking-widest block mb-2">
+          {t('pricingPackages') || '💰 Pricing Packages'}
+        </span>
+        <div className="grid grid-cols-3 gap-2">
+          {[
+            { id: 'Basic', cost: details.costBasic, desc: t('quickSweep') || 'Quick sweep' },
+            { id: 'Standard', cost: details.costStandard, desc: t('deepScrub') || 'Deep scrub' },
+            { id: 'Premium', cost: details.costPremium, desc: t('ecoWash') || 'Eco wash' }
+          ].map(pkg => (
+            <button
+              key={pkg.id}
+              type="button"
+              onPointerDown={(e) => e.stopPropagation()}
+              onClick={(e) => {
+                e.stopPropagation();
+                updateServiceState(item, 'packageType', pkg.id);
+                speakText(`${pkg.id} package selected. Total cost ${pkg.cost} rupees.`);
+              }}
+              className={`p-2.5 rounded-2xl border-2 text-center transition-all flex flex-col items-center justify-center gap-0.5 active:scale-95 ${
+                state.packageType === pkg.id 
+                  ? 'border-wa-teal bg-wa-light text-wa-dark shadow-sm font-black ring-2 ring-wa-teal/20' 
+                  : 'border-slate-200 bg-white text-slate-600 hover:bg-slate-50'
+              }`}
+            >
+              <span className="text-[10px] uppercase font-black tracking-wider text-slate-400">{pkg.id}</span>
+              <span className="text-base font-black text-slate-800">₹{pkg.cost}</span>
+              <span className="text-[8px] text-slate-400 leading-none">{pkg.desc}</span>
+            </button>
+          ))}
+        </div>
+      </div>
+
+      {/* Date & Time Slot Selection */}
+      <div className="border-t border-dashed border-slate-200/80 pt-4 relative z-10 space-y-3">
+        <span className="text-xs font-black text-slate-700 uppercase tracking-widest flex items-center gap-1.5">
+          <Clock size={16} className="text-wa-teal" />
+          {t('bookSlotOption') || '⏱ Select Date & Time Slot'}
+        </span>
+
+        {/* Date Chips */}
+        <div>
+          <label className="text-[11px] font-extrabold text-slate-600 block mb-1.5">
+            📅 {t('selectDateDay') || 'Select Date'}:
+          </label>
+          <div className="grid grid-cols-2 sm:grid-cols-4 gap-2">
+            {[
+              { id: 'Today', label: t('today') || 'Today' },
+              { id: 'Tomorrow', label: t('tomorrow') || 'Tomorrow' },
+              { id: '30th May', label: '30th May' },
+              { id: '31st May', label: '31st May' }
+            ].map(d => (
+              <button
+                key={d.id}
+                type="button"
+                onPointerDown={(e) => e.stopPropagation()}
+                onClick={(e) => {
+                  e.stopPropagation();
+                  updateServiceState(item, 'date', d.id);
+                  speakText(`Date set to ${d.label}`);
+                }}
+                className={`py-2.5 px-2 rounded-xl border-2 text-xs font-black transition-all text-center flex items-center justify-center gap-1 active:scale-95 ${
+                  state.date === d.id
+                    ? 'border-wa-teal bg-wa-teal text-white shadow-md font-black scale-102 ring-2 ring-wa-teal/20'
+                    : 'border-slate-200 bg-white text-slate-700 hover:bg-slate-50'
+                }`}
+              >
+                {state.date === d.id && <span>✓</span>}
+                {d.label}
+              </button>
+            ))}
+          </div>
+        </div>
+
+        {/* Time Slot Chips */}
+        <div>
+          <label className="text-[11px] font-extrabold text-slate-600 block mb-1.5">
+            ⏰ {t('selectTimeSlot') || 'Select Time Slot'}:
+          </label>
+          <div className="grid grid-cols-2 sm:grid-cols-4 gap-2">
+            {[
+              { id: '09:00 AM - 11:00 AM', label: '🌅 9 - 11 AM' },
+              { id: '12:00 PM - 02:00 PM', label: '☀️ 12 - 2 PM' },
+              { id: '03:00 PM - 05:00 PM', label: '🌤️ 3 - 5 PM' },
+              { id: '06:00 PM - 08:00 PM', label: '🌙 6 - 8 PM' }
+            ].map(tSlot => (
+              <button
+                key={tSlot.id}
+                type="button"
+                onPointerDown={(e) => e.stopPropagation()}
+                onClick={(e) => {
+                  e.stopPropagation();
+                  updateServiceState(item, 'time', tSlot.id);
+                  speakText(`Time slot set to ${tSlot.label}`);
+                }}
+                className={`py-2.5 px-2 rounded-xl border-2 text-xs font-black transition-all text-center flex items-center justify-center gap-1 active:scale-95 ${
+                  state.time === tSlot.id
+                    ? 'border-wa-teal bg-wa-teal text-white shadow-md font-black scale-102 ring-2 ring-wa-teal/20'
+                    : 'border-slate-200 bg-white text-slate-700 hover:bg-slate-50'
+                }`}
+              >
+                {state.time === tSlot.id && <span>✓</span>}
+                {tSlot.label}
+              </button>
+            ))}
+          </div>
+        </div>
+      </div>
+
+      {/* Languages & Address Selection */}
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-4 border-t border-slate-100 pt-4 relative z-10">
+        <div className="flex items-center gap-2 text-xs font-bold text-slate-600">
+          <Languages size={15} className="text-slate-500 shrink-0" />
+          <span>{t('languagesLabel') || 'Languages'}: <strong className="text-slate-800">{details.languagesSpoken}</strong></span>
+        </div>
+        <div>
+          <label className="text-xs font-black text-slate-600 uppercase tracking-widest block mb-1.5">{t('addressSelection') || '👤 Address Selection'}</label>
+          <select 
+            value={state.address} 
+            onPointerDown={(e) => e.stopPropagation()}
+            onChange={(e) => {
+              e.stopPropagation();
+              updateServiceState(item, 'address', e.target.value);
+            }}
+            className="w-full text-xs font-black p-3 rounded-xl border-2 border-slate-400 bg-white !text-slate-900 shadow-sm focus:border-wa-teal outline-none cursor-pointer"
+          >
+            <option className="!text-slate-900 !bg-white font-bold" value="Home (12, Ashoka Heights, Pune)">{t('homeAddressSlot') || 'Home (12, Ashoka Heights, Pune)'}</option>
+            <option className="!text-slate-900 !bg-white font-bold" value="Office (Phase 3, Hinjewadi, Pune)">{t('officeAddressSlot') || 'Office (Phase 3, Hinjewadi, Pune)'}</option>
+            <option className="!text-slate-900 !bg-white font-bold" value="Children's Home (Block B, Kothrud, Pune)">{t('childrenAddressSlot') || "Children's Home (Block B, Kothrud, Pune)"}</option>
+            <option className="!text-slate-900 !bg-white font-bold" value="custom">{t('addNewAddressSlot') || 'Add New Address...'}</option>
+          </select>
+          {state.address === 'custom' && (
+            <input 
+              type="text"
+              value={state.customAddress}
+              onPointerDown={(e) => e.stopPropagation()}
+              placeholder={t('typeAddressPlaceholder') || 'Type your complete address here...'}
+              className="w-full text-xs font-semibold p-3 rounded-xl border border-slate-300 bg-white mt-2 shadow-inner focus:border-wa-teal outline-none"
+              onChange={(e) => {
+                e.stopPropagation();
+                updateServiceState(item, 'customAddress', e.target.value);
+              }}
+            />
+          )}
+        </div>
+      </div>
+    </div>
+  );
+};
+
 const ServicesPage = () => {
   const navigate = useNavigate();
   const { lang, t, setLang } = useLanguage();
@@ -882,9 +1037,9 @@ const ServicesPage = () => {
             <ArrowLeft size={24} className="text-wa-text" />
           </button>
           <div>
-            <h1 className="wa-header-title text-wa-text">{t('homeCareTitle') || 'Home Care & Services'}</h1>
+            <h1 className="wa-header-title text-wa-text">{t('homeCareTitle', 'Home Care Services')}</h1>
             <p className="text-wa-subtext text-xs font-semibold">
-              {t('homeCareSubtitle')?.slice(0, 48) || 'Elderly-friendly trusted home help'}
+              {t('homeCareSubtitle', 'Elderly-friendly trusted home help')}
             </p>
           </div>
         </div>
@@ -1197,99 +1352,15 @@ const ServicesPage = () => {
                           {details.description}
                         </p>
 
-                        {/* Package Selection */}
-                        <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mt-4 border-t border-dashed border-slate-200/80 pt-4 relative z-10">
-                          <div>
-                            <span className="text-xs font-black text-slate-500 uppercase tracking-widest block mb-2">{t('pricingPackages') || '💰 Pricing Packages'}</span>
-                            <div className="grid grid-cols-3 gap-2">
-                              {[
-                                { id: 'Basic', cost: details.costBasic, desc: t('quickSweep') || 'Quick sweep' },
-                                { id: 'Standard', cost: details.costStandard, desc: t('deepScrub') || 'Deep scrub' },
-                                { id: 'Premium', cost: details.costPremium, desc: t('ecoWash') || 'Eco wash' }
-                              ].map(pkg => (
-                                <button
-                                  key={pkg.id}
-                                  onClick={() => {
-                                    updateServiceState(item, 'packageType', pkg.id);
-                                    speakText(`${pkg.id} package selected. Total cost ${pkg.cost} rupees.`);
-                                  }}
-                                  className={`p-2.5 rounded-xl border-2 text-center transition-all flex flex-col items-center justify-center gap-0.5
-                                    ${state.packageType === pkg.id 
-                                      ? 'border-wa-teal bg-wa-light text-wa-dark shadow-sm scale-102 font-extrabold' 
-                                      : 'border-slate-200 bg-white text-slate-600'
-                                    }`}
-                                >
-                                  <span className="text-[10px] uppercase font-black tracking-wider text-slate-400">{pkg.id}</span>
-                                  <span className="text-base font-black text-slate-800">₹{pkg.cost}</span>
-                                  <span className="text-[8px] text-slate-400 leading-none">{pkg.desc}</span>
-                                </button>
-                              ))}
-                            </div>
-                          </div>
-
-                          {/* Time Slots */}
-                          <div>
-                            <span className="text-xs font-black text-slate-500 uppercase tracking-widest block mb-2">{t('bookSlotOption') || '⏱ Book Slot Option'}</span>
-                            <div className="flex gap-2">
-                              <div className="flex-1">
-                                <label className="text-[9px] font-black text-slate-400 block mb-0.5 uppercase">{t('selectDateDay') || 'Select Date & Day'}</label>
-                                <select 
-                                  value={state.date} 
-                                  onChange={(e) => updateServiceState(item, 'date', e.target.value)}
-                                  className="w-full text-xs font-bold p-2.5 rounded-xl border border-slate-200 bg-white"
-                                >
-                                  <option>Today (Thursday)</option>
-                                  <option>Tomorrow (Friday)</option>
-                                  <option>30th May (Saturday)</option>
-                                  <option>31st May (Sunday)</option>
-                                </select>
-                              </div>
-                              <div className="flex-1">
-                                <label className="text-[9px] font-black text-slate-400 block mb-0.5 uppercase">{t('selectTimeSlot') || 'Select Time Slot'}</label>
-                                <select 
-                                  value={state.time} 
-                                  onChange={(e) => updateServiceState(item, 'time', e.target.value)}
-                                  className="w-full text-xs font-bold p-2.5 rounded-xl border border-slate-200 bg-white"
-                                >
-                                  <option>09:00 AM - 11:00 AM</option>
-                                  <option>12:00 PM - 02:00 PM</option>
-                                  <option>03:00 PM - 05:00 PM</option>
-                                  <option>06:00 PM - 08:00 PM</option>
-                                </select>
-                              </div>
-                            </div>
-                          </div>
-                        </div>
-
-                        {/* Languages and Address */}
-                        <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mt-4 border-t border-slate-100 pt-4 relative z-10">
-                          <div className="flex items-center gap-2 text-xs font-bold text-slate-500">
-                            <Languages size={15} className="text-slate-400 shrink-0" />
-                            <span>{t('languagesLabel') || 'Languages'}: <strong className="text-slate-700">{details.languagesSpoken}</strong></span>
-                          </div>
-                          <div>
-                            <label className="text-xs font-black text-slate-500 uppercase tracking-widest block mb-2">{t('addressSelection') || '👤 Address Selection'}</label>
-                            <select 
-                              value={state.address} 
-                              onChange={(e) => updateServiceState(item, 'address', e.target.value)}
-                              className="w-full text-xs font-bold p-2.5 rounded-xl border border-slate-200 bg-white"
-                            >
-                              <option>Home (12, Ashoka Heights, Pune)</option>
-                              <option>Office (Phase 3, Hinjewadi, Pune)</option>
-                              <option>Children's Home (Block B, Kothrud, Pune)</option>
-                              <option value="custom">Add New Address...</option>
-                            </select>
-                            {state.address === 'custom' && (
-                              <input 
-                                type="text"
-                                value={state.customAddress}
-                                placeholder={t('typeAddressPlaceholder') || 'Type your complete address here...'}
-                                className="w-full text-xs font-semibold p-2.5 rounded-xl border border-slate-200 bg-white mt-2 shadow-inner focus:border-wa-teal outline-none"
-                                onChange={(e) => updateServiceState(item, 'customAddress', e.target.value)}
-                              />
-                            )}
-                          </div>
-                        </div>
+                        <ServiceSlotConfigurator 
+                          item={item} 
+                          details={details} 
+                          state={state} 
+                          updateServiceState={updateServiceState} 
+                          speakText={speakText} 
+                          t={t} 
+                          categoryId={category.id} 
+                        />
 
                         {/* Confirm Button */}
                         <div className="mt-5 pt-4 border-t border-slate-100 flex items-center justify-between relative z-10">
@@ -1462,98 +1533,15 @@ const ServicesPage = () => {
                                 <GpsLiveTracker />
                               ) : (
                                 <>
-                                  {/* Pricing options */}
-                                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mt-4 border-t border-dashed border-slate-200/80 pt-4 relative z-10">
-                                    <div>
-                                      <span className="text-xs font-black text-slate-500 uppercase tracking-widest block mb-2">💰 Pricing Packages</span>
-                                      <div className="grid grid-cols-3 gap-2">
-                                        {[
-                                          { id: 'Basic', cost: details.costBasic, desc: t('quickSweep') || 'Quick sweep' },
-                                          { id: 'Standard', cost: details.costStandard, desc: t('deepScrub') || 'Deep scrub' },
-                                          { id: 'Premium', cost: details.costPremium, desc: t('ecoWash') || 'Eco wash' }
-                                        ].map(pkg => (
-                                          <button
-                                            key={pkg.id}
-                                            onClick={() => {
-                                              updateServiceState(item, 'packageType', pkg.id);
-                                              speakText(`${pkg.id} package selected. Total cost ${pkg.cost} rupees.`);
-                                            }}
-                                            className={`p-2.5 rounded-xl border-2 text-center transition-all flex flex-col items-center justify-center gap-0.5
-                                              ${state.packageType === pkg.id 
-                                                ? 'border-wa-teal bg-wa-light text-wa-dark shadow-sm scale-102 font-extrabold' 
-                                                : 'border-slate-200 bg-white text-slate-600'
-                                              }`}
-                                          >
-                                            <span className="text-[10px] uppercase font-black tracking-wider text-slate-400">{pkg.id}</span>
-                                            <span className="text-base font-black text-slate-800">₹{pkg.cost}</span>
-                                            <span className="text-[8px] text-slate-400 leading-none">{pkg.desc}</span>
-                                          </button>
-                                        ))}
-                                      </div>
-                                    </div>
-
-                                    {/* Slot Selection */}
-                                    <div>
-                                      <span className="text-xs font-black text-slate-500 uppercase tracking-widest block mb-2">⏱ Book Slot Option</span>
-                                      <div className="flex gap-2">
-                                        <div className="flex-1">
-                                          <label className="text-[9px] font-black text-slate-400 block mb-0.5 uppercase">Select Date & Day</label>
-                                          <select 
-                                            value={state.date} 
-                                            onChange={(e) => updateServiceState(item, 'date', e.target.value)}
-                                            className="w-full text-xs font-bold p-2.5 rounded-xl border border-slate-200 bg-white"
-                                          >
-                                            <option value="Today">{t('today') || 'Today'}</option>
-                                            <option value="Tomorrow">{t('tomorrow') || 'Tomorrow'}</option>
-                                            <option value="30th May">30th May</option>
-                                            <option value="31st May">31st May</option>
-                                          </select>
-                                        </div>
-                                        <div className="flex-1">
-                                          <label className="text-[9px] font-black text-slate-400 block mb-0.5 uppercase">Select Time Slot</label>
-                                          <select 
-                                            value={state.time} 
-                                            onChange={(e) => updateServiceState(item, 'time', e.target.value)}
-                                            className="w-full text-xs font-bold p-2.5 rounded-xl border border-slate-200 bg-white"
-                                          >
-                                            <option>09:00 AM - 11:00 AM</option>
-                                            <option>12:00 PM - 02:00 PM</option>
-                                            <option>03:00 PM - 05:00 PM</option>
-                                            <option>06:00 PM - 08:00 PM</option>
-                                          </select>
-                                        </div>
-                                      </div>
-                                    </div>
-                                  </div>
-
-                                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mt-4 border-t border-slate-100 pt-4 relative z-10">
-                                    <div className="flex items-center gap-2 text-xs font-bold text-slate-500">
-                                      <Languages size={15} className="text-slate-400 shrink-0" />
-                                      <span>Languages: <strong className="text-slate-700">{details.languagesSpoken}</strong></span>
-                                    </div>
-                                    <div>
-                                      <label className="text-xs font-black text-slate-500 uppercase tracking-widest block mb-2">👤 Address Selection</label>
-                                      <select 
-                                        value={state.address} 
-                                        onChange={(e) => updateServiceState(item, 'address', e.target.value)}
-                                        className="w-full text-xs font-bold p-2.5 rounded-xl border border-slate-200 bg-white"
-                                      >
-                                        <option value="Home (12, Ashoka Heights, Pune)">{t('homeAddressSlot') || 'Home (12, Ashoka Heights, Pune)'}</option>
-                                        <option value="Office (Phase 3, Hinjewadi, Pune)">{t('officeAddressSlot') || 'Office (Phase 3, Hinjewadi, Pune)'}</option>
-                                        <option value="Children's Home (Block B, Kothrud, Pune)">{t('childrenAddressSlot') || "Children's Home (Block B, Kothrud, Pune)"}</option>
-                                        <option value="custom">{t('addNewAddressSlot') || 'Add New Address...'}</option>
-                                      </select>
-                                      {state.address === 'custom' && (
-                                        <input 
-                                          type="text"
-                                          value={state.customAddress}
-                                          placeholder="Type your complete address here..."
-                                          className="w-full text-xs font-semibold p-2.5 rounded-xl border border-slate-200 bg-white mt-2 shadow-inner focus:border-wa-teal outline-none"
-                                          onChange={(e) => updateServiceState(item, 'customAddress', e.target.value)}
-                                        />
-                                      )}
-                                    </div>
-                                  </div>
+                                    <ServiceSlotConfigurator 
+                                      item={item} 
+                                      details={details} 
+                                      state={state} 
+                                      updateServiceState={updateServiceState} 
+                                      speakText={speakText} 
+                                      t={t} 
+                                      categoryId={cat.id} 
+                                    />
 
                                   <div className="mt-5 pt-4 border-t border-slate-100 flex items-center justify-between relative z-10">
                                     <div className="text-slate-500 text-xs font-bold">

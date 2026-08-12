@@ -48,31 +48,25 @@ export const AppLinks = {
 export const executeDeepLink = (primaryUrl, fallbackUrl = null) => {
   if (!primaryUrl) return;
 
-  const isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
-
   try {
-    // If we're on mobile and have a very specific protocol (like upi://)
+    // 1. Native deep links (UPI, WhatsApp, Tel, SMS)
     if (primaryUrl.startsWith('upi://') || primaryUrl.startsWith('whatsapp://') || primaryUrl.startsWith('tel:') || primaryUrl.startsWith('sms:')) {
+      // Direct window.location.href opens installed native apps (Google Pay, PhonePe, Paytm, BHIM, WhatsApp)
       window.location.href = primaryUrl;
-
-      // Mobile browsers don't easily tell us if a custom protocol failed.
-      // We use a timeout trick: if the app opens, the browser goes to the background.
-      // If it doesn't leave the page after 2 seconds, we trigger the fallback.
-      if (fallbackUrl) {
-        setTimeout(() => {
-          if (document.hasFocus()) {
-             window.open(fallbackUrl, '_blank', 'noopener,noreferrer');
-          }
-        }, 2000);
-      }
-    } else {
-      // It's a standard web URL
-      window.open(primaryUrl, '_blank', 'noopener,noreferrer');
+      return;
     }
+
+    // 2. Standard web links
+    if (primaryUrl.startsWith('http://') || primaryUrl.startsWith('https://')) {
+      window.location.href = primaryUrl;
+      return;
+    }
+
+    window.location.href = primaryUrl;
   } catch (error) {
-    console.error("Deep link failed", error);
+    console.error("Deep link execution error:", error);
     if (fallbackUrl) {
-       window.open(fallbackUrl, '_blank', 'noopener,noreferrer');
+      window.location.href = fallbackUrl;
     }
   }
 };
@@ -114,8 +108,8 @@ export const getContextualPracticeLink = (moduleTitle, stepTitle, stepContent) =
      if (title.includes('phonepe')) {
         return { url: AppLinks.upiPhonepe(), fallback: 'https://phonepay.com/', label: 'Open PhonePe', icon: '💸' };
      }
-     // Generic UPI
-     return { url: AppLinks.upiGeneric('demo@okaxis', 'Demo Transfer'), fallback: 'https://www.googlepay.com/', label: 'Try UPI Payment', icon: '💸' };
+     // Generic UPI / SBI Banking
+     return { url: 'https://onlinesbi.sbi.bank.in/', fallback: 'https://onlinesbi.sbi.bank.in/', label: 'Open SBI Banking Portal', icon: '🏦' };
   }
 
   // 3. PHONE / CONTACTS MODULE

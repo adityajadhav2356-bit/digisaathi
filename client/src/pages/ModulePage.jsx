@@ -408,24 +408,35 @@ const ModulePage = () => {
               if (!practice) return null;
               
               return (
-                <motion.button
-                   whileTap={{ scale: 0.96 }}
-                   onClick={() => executeDeepLink(practice.url, practice.fallback)}
-                   className="w-full mt-4 bg-gradient-to-r from-blue-500 to-blue-600 shadow-md shadow-blue-500/25 text-white rounded-2xl p-4 flex items-center justify-between border border-blue-400"
-                >
-                   <div className="flex items-center gap-3">
-                     <div className="bg-white/20 p-2.5 rounded-2xl shadow-inner backdrop-blur-sm">
-                       <span className="text-2xl drop-shadow-sm">{practice.icon}</span>
+                <div className="space-y-2.5 mt-4">
+                  <motion.button
+                     whileTap={{ scale: 0.96 }}
+                     onClick={() => executeDeepLink(practice.url, practice.fallback)}
+                     className="w-full bg-gradient-to-r from-blue-600 to-indigo-600 shadow-md shadow-blue-500/25 text-white rounded-2xl p-4 flex items-center justify-between border border-blue-400 cursor-pointer"
+                  >
+                     <div className="flex items-center gap-3">
+                       <div className="bg-white/20 p-2.5 rounded-2xl shadow-inner backdrop-blur-sm">
+                         <span className="text-2xl drop-shadow-sm">{practice.icon}</span>
+                       </div>
+                       <div className="text-left flex flex-col">
+                          <span className="font-black text-lg tracking-wide">{practice.label}</span>
+                          <span className="text-blue-100 font-medium text-xs tracking-wider uppercase opacity-90 block mt-0.5">Opens Installed App (GPay / PhonePe / Paytm)</span>
+                       </div>
                      </div>
-                     <div className="text-left flex flex-col">
-                        <span className="font-black text-lg tracking-wide">{practice.label}</span>
-                        <span className="text-blue-50 font-medium text-xs tracking-wider uppercase opacity-90 block mt-0.5">Practice Safely • Real App</span>
+                     <div className="bg-white/10 p-2 rounded-full shrink-0">
+                        <ExternalLink size={20} className="text-white opacity-90" />
                      </div>
-                   </div>
-                   <div className="bg-white/10 p-2 rounded-full shrink-0">
-                      <ExternalLink size={20} className="text-white opacity-90" />
-                   </div>
-                </motion.button>
+                  </motion.button>
+
+                  {/* Sandbox Simulator Option */}
+                  <button
+                    type="button"
+                    onClick={() => navigate('/safety/simulator')}
+                    className="w-full py-2.5 px-4 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-700 font-bold text-xs flex items-center justify-center gap-2 transition-colors border border-slate-300"
+                  >
+                    <ShieldCheck size={16} className="text-wa-teal" /> Or Practice Risk-Free in Safe Payment Simulator ➔
+                  </button>
+                </div>
               );
             })()}
 

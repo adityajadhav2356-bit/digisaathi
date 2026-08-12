@@ -222,10 +222,10 @@ const DetailsPage = () => {
                     <h3 className="flex items-center gap-2 text-wa-subtext text-xs font-bold uppercase tracking-widest mb-3 px-1"><CheckCircle size={16} /> {t('learnGoals') || 'What do you want to learn?'}</h3>
                     <div className="grid grid-cols-2 gap-3">
                       {[
-                        { id: 'upi', label: t('goalUpi') || 'UPI Payments', icon: Wallet, color: 'text-blue-500', bg: 'bg-blue-50' },
-                        { id: 'whatsapp', label: t('goalWhatsapp') || 'WhatsApp', icon: MessageCircle, color: 'text-wa-green', bg: 'bg-wa-light' },
-                        { id: 'govt', label: t('goalGovt') || 'Govt Services', icon: FileText, color: 'text-purple-500', bg: 'bg-purple-50' },
-                        { id: 'safety', label: t('goalSafety') || 'Online Safety', icon: ShieldCheck, color: 'text-red-500', bg: 'bg-red-50' }
+                        { id: 'upi', label: lang === 'mr' ? 'UPI पेमेंट' : lang === 'hi' ? 'UPI पेमेंट' : 'UPI Payments', icon: Wallet, color: 'text-blue-500', bg: 'bg-blue-50' },
+                        { id: 'whatsapp', label: 'WhatsApp', icon: MessageCircle, color: 'text-wa-green', bg: 'bg-wa-light' },
+                        { id: 'govt', label: lang === 'mr' ? 'सरकारी सेवा' : lang === 'hi' ? 'सरकारी सेवाएं' : 'Govt Services', icon: FileText, color: 'text-purple-500', bg: 'bg-purple-50' },
+                        { id: 'safety', label: lang === 'mr' ? 'सुरक्षा आणि अलर्ट' : lang === 'hi' ? 'ऑनलाइन सुरक्षा' : 'Online Safety', icon: ShieldCheck, color: 'text-red-500', bg: 'bg-red-50' }
                       ].map(g => {
                         const isSelected = formData.goals.includes(g.id);
                         return (

@@ -490,7 +490,7 @@ const PremiumAssistantPage = () => {
               <span>DigiSaathi AI</span>
               <Sparkles size={16} className="text-cyan-400 fill-cyan-400/20" />
             </h1>
-            <p className="text-[10px] text-slate-400 font-semibold uppercase tracking-widest">ChatGPT-style Assistant</p>
+            <p className="text-[10px] text-cyan-400/90 font-semibold uppercase tracking-widest">Smart AI Companion</p>
           </div>
         </div>
 
@@ -811,7 +811,7 @@ const PremiumAssistantPage = () => {
       </div>
 
       {/* ── INPUT & ACTIONS FOOTER ── */}
-      <div className="bg-slate-900 border-t border-slate-800 px-4 py-3 space-y-3 shadow-2xl">
+      <div className="bg-slate-900 border-t border-slate-800 px-4 py-3 space-y-3 shadow-2xl sticky bottom-0 z-30 pb-safe">
         
         {messages.length === 0 && (
           <div className="flex gap-2 overflow-x-auto pb-1 scrollbar-none snap-x snap-mandatory">

@@ -7,15 +7,15 @@ import { useLanguage } from '../context/LanguageContext';
 const BottomNav = () => {
   const location = useLocation();
   const { t } = useLanguage();
-  const hiddenPaths = ['/', '/login', '/details'];
-  if (hiddenPaths.includes(location.pathname) || location.pathname.startsWith('/volunteer')) return null;
+  const hiddenPaths = ['/', '/login', '/details', '/voice-assistant'];
+  if (hiddenPaths.includes(location.pathname) || location.pathname.startsWith('/voice-assistant') || location.pathname.startsWith('/volunteer')) return null;
 
   const links = [
     { path: '/home',           icon: Home,        label: t('navHome')   || 'Home' },
     { path: '/module/upi',     icon: BookOpen,     label: t('navLearn')  || 'Learn' },
     { path: '/alerts',         icon: ShieldAlert,  label: t('navAlerts') || 'Alerts' },
     { path: '/voice-assistant',icon: Mic,          label: 'Assistant' },
-    { path: '/services',       icon: Sparkles,     label: t('homeCareTitle')?.split(' ')[0] || 'Home Care' },
+    { path: '/services',       icon: Sparkles,     label: 'Services' },
     { path: '/profile',        icon: User,         label: t('navProfile')|| 'Profile' },
   ];
 

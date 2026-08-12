@@ -49,6 +49,17 @@
     -moz-osx-font-smoothing: grayscale;
     overflow-x: hidden;
   }
+
+  /* High contrast select & option text visibility fix */
+  select {
+    color: #0f172a !important;
+    background-color: #ffffff !important;
+  }
+
+  option {
+    color: #0f172a !important;
+    background-color: #ffffff !important;
+  }
 }
 
 @layer components {

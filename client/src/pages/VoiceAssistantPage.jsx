@@ -172,32 +172,34 @@ const VoiceAssistantPage = () => {
   return (
     <PageTransition className="min-h-screen bg-wa-chatBg flex flex-col">
       {/* Header */}
-      <header className="wa-header">
-        <div className="flex items-center gap-3">
-          <button onClick={() => navigate('/home')} className="p-2 rounded-full bg-white/15 hover:bg-white/25 transition">
-            <ChevronLeft size={22} className="text-white" />
-          </button>
+      <header className="wa-header sticky top-0 z-30 shadow-md">
+        <div className="flex items-center justify-between">
           <div className="flex items-center gap-3">
-            <div className="relative">
-              <div className="w-9 h-9 rounded-full bg-wa-green flex items-center justify-center">
-                <Mic size={18} className="text-white" />
+            <button onClick={() => navigate('/home')} className="p-2 rounded-full bg-white/15 hover:bg-white/25 transition">
+              <ChevronLeft size={22} className="text-white" />
+            </button>
+            <div className="flex items-center gap-3">
+              <div className="relative">
+                <div className="w-9 h-9 rounded-full bg-wa-green flex items-center justify-center">
+                  <Mic size={18} className="text-white" />
+                </div>
+                <span className="absolute bottom-0 right-0 w-2.5 h-2.5 bg-green-300 rounded-full border-2 border-wa-teal" />
               </div>
-              <span className="absolute bottom-0 right-0 w-2.5 h-2.5 bg-green-300 rounded-full border-2 border-wa-teal" />
-            </div>
-            <div>
-              <h1 className="wa-header-title">{t('voiceAssistant') || 'AI Assistant'}</h1>
-              <p className="text-white/65 text-xs">{(LANGUAGES[lang]?.nativeName) || 'Ask me anything'}</p>
+              <div>
+                <h1 className="wa-header-title">{t('voiceAssistant') || 'AI Assistant'}</h1>
+                <p className="text-white/65 text-xs">{(LANGUAGES[lang]?.nativeName) || 'Ask me anything'}</p>
+              </div>
             </div>
           </div>
         </div>
       </header>
 
       {/* Chat area */}
-      <div className="flex-1 overflow-y-auto px-4 py-4 space-y-3">
+      <div className="flex-1 overflow-y-auto px-4 py-4 space-y-4 max-w-3xl mx-auto w-full">
         {/* Welcome bubble */}
         {history.length === 0 && (
           <div className="flex justify-start">
-            <div className="wa-bubble max-w-xs text-base">
+            <div className="wa-bubble max-w-sm text-base shadow-sm">
               <p className="font-medium text-wa-text">
                 👋 Namaste! I'm your DigiSaathi AI assistant. Ask me absolutely anything — from general knowledge and advice, to coding help and daily life questions!
               </p>
@@ -223,8 +225,8 @@ const VoiceAssistantPage = () => {
                 )}
               </div>
             )}
-            <div className={msg.role === 'user' ? 'wa-bubble-sent' : 'wa-bubble'}>
-              <p className="text-wa-text text-base font-medium">{msg.text}</p>
+            <div className={msg.role === 'user' ? 'wa-bubble-sent max-w-md shadow-sm' : 'wa-bubble max-w-md shadow-sm'}>
+              <p className="text-wa-text text-base font-medium whitespace-pre-wrap">{msg.text}</p>
               <p className="text-wa-subtext text-[10px] text-right mt-1">
                 {new Date().toLocaleTimeString('en-IN', { hour: '2-digit', minute: '2-digit' })}
                 {msg.role === 'user' && ' ✓✓'}
@@ -257,14 +259,14 @@ const VoiceAssistantPage = () => {
 
       {/* Quick questions */}
       {history.length === 0 && (
-        <div className="px-4 pb-2">
+        <div className="px-4 pb-3 max-w-3xl mx-auto w-full">
           <p className="text-wa-subtext text-xs font-bold uppercase tracking-widest mb-2">Quick questions</p>
           <div className="flex flex-wrap gap-2">
             {quickQuestions.map(q => (
               <button
                 key={q}
                 onClick={() => handleUserSpeech(q)}
-                className="wa-chip wa-chip-inactive text-xs"
+                className="wa-chip wa-chip-inactive text-xs shadow-sm hover:scale-102 transition"
               >
                 {q}
               </button>
@@ -273,21 +275,20 @@ const VoiceAssistantPage = () => {
         </div>
       )}
 
-      {/* Bottom bar */}
-      <div className="bg-white border-t border-wa-border px-4 py-3 pb-safe">
-        {/* Transcript/Input preview */}
-        <div className="flex items-center gap-3">
-          <form onSubmit={handleTextSubmit} className="flex-1 flex items-center bg-wa-chatBg border border-wa-border rounded-2xl px-4 py-2">
+      {/* Bottom bar (Docked cleanly at bottom) */}
+      <div className="bg-white border-t border-slate-200 px-4 py-3 sticky bottom-0 z-30 shadow-lg pb-safe">
+        <div className="max-w-3xl mx-auto flex items-center gap-3">
+          <form onSubmit={handleTextSubmit} className="flex-1 flex items-center bg-slate-100 border border-slate-300 rounded-2xl px-4 py-2.5 shadow-inner">
             <input
               type="text"
               value={isListening ? (transcript || t('listeningDotDotDot') || '🎙️ Listening...') : inputText}
               onChange={(e) => setInputText(e.target.value)}
               disabled={isListening || loading}
-              placeholder={t('askSomething') || "Ask something..."}
-              className={`flex-1 bg-transparent border-none outline-none text-sm font-medium ${isListening ? 'text-wa-teal animate-pulse italic' : 'text-wa-text'}`}
+              placeholder={t('askSomething') || "Type your question here..."}
+              className={`flex-1 bg-transparent border-none outline-none text-sm font-semibold text-slate-900 ${isListening ? 'text-wa-teal animate-pulse italic' : 'text-slate-900'}`}
             />
             {inputText.trim() && !isListening && (
-              <button type="submit" className="text-wa-teal p-1">
+              <button type="submit" className="text-wa-teal p-1.5 hover:scale-110 active:scale-95 transition">
                 <Send size={20} />
               </button>
             )}
@@ -297,7 +298,7 @@ const VoiceAssistantPage = () => {
           {response && !isListening && (
             <button
               onClick={() => speakResponse(response, lang)}
-              className={`p-3 rounded-full border transition ${isSpeaking ? 'bg-wa-light border-wa-teal text-wa-teal' : 'bg-wa-chatBg border-wa-border text-wa-teal hover:bg-wa-light'}`}
+              className={`p-3 rounded-full border transition ${isSpeaking ? 'bg-wa-light border-wa-teal text-wa-teal' : 'bg-slate-100 border-slate-300 text-wa-teal hover:bg-slate-200'}`}
             >
               <Volume2 size={20} className={isSpeaking ? 'animate-pulse' : ''} />
             </button>
@@ -308,8 +309,8 @@ const VoiceAssistantPage = () => {
             whileTap={{ scale: 0.9 }}
             onClick={toggleListening}
             disabled={loading}
-            className={`w-12 h-12 rounded-full flex items-center justify-center shadow-wa-lg transition-all relative shrink-0
-              ${isListening ? 'bg-red-500' : loading ? 'bg-wa-border' : 'bg-gradient-to-br from-wa-green to-wa-teal'}`}
+            className={`w-12 h-12 rounded-full flex items-center justify-center shadow-lg transition-all relative shrink-0
+              ${isListening ? 'bg-red-500' : loading ? 'bg-slate-300' : 'bg-gradient-to-br from-wa-green to-wa-teal'}`}
           >
             {isListening && <span className="absolute inset-0 rounded-full bg-red-400 animate-ping opacity-50" />}
             {loading
