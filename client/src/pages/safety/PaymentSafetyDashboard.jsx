@@ -10,9 +10,9 @@ const PaymentSafetyDashboard = () => {
 
   const menuItems = [
     { title: "Safe Payment Simulator", subtitle: "Practice UPI Safely", icon: <Smartphone size={32} />, color: "bg-blue-100 text-blue-700", border: "border-blue-200", link: "/safety/simulator" },
-    { title: "QR Code Checker", subtitle: "Scan Safely", icon: <QrCode size={32} />, color: "bg-indigo-100 text-indigo-700", border: "border-indigo-200", link: "/safety/qr-scanner" },
+    { title: "QR Code Checker", subtitle: "Scan Safely", icon: <QrCode size={32} />, color: "bg-indigo-100 text-indigo-700", border: "border-indigo-200", link: "/safety/qr-checker" },
     { title: "AI Risk Analysis", subtitle: "Check Before Paying", icon: <Eye size={32} />, color: "bg-amber-100 text-amber-700", border: "border-amber-200", link: "/safety/risk-analysis" },
-    { title: "Scam Awareness", subtitle: "Learn to be Safe", icon: <BookOpen size={32} />, color: "bg-purple-100 text-purple-700", border: "border-purple-200", link: "/safety/awareness" },
+    { title: "Scam Awareness", subtitle: "Learn to be Safe", icon: <BookOpen size={32} />, color: "bg-purple-100 text-purple-700", border: "border-purple-200", link: "/safety/scam-awareness" },
     { title: "Trusted Contacts", subtitle: "Family Approval", icon: <BellRing size={32} />, color: "bg-teal-100 text-teal-700", border: "border-teal-200", link: "/safety/trusted-contacts" },
     { title: "Emergency Help", subtitle: "Report Fraud", icon: <PhoneCall size={32} />, color: "bg-red-100 text-red-700", border: "border-red-200", link: "/safety/emergency" },
   ];
