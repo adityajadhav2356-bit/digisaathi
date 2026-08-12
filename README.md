@@ -71,7 +71,7 @@ DigiSaathi is a full-stack web application designed specifically for senior citi
 - `/api/modules` — Educational contents & Progress saving
 - `/api/volunteers` — Pairing requests & Leaderboards
 - `/api/alerts` — Fraud warnings & Quiz data
-- `/api/family` — progress summaries for caregivers
+- `/api/family` — Progress summaries for caregivers
 
 ---
 
